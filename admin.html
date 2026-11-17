@@ -223,17 +223,106 @@
       border-color: #f43f5e;
       color: #fff;
     }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 12px;
+    }
+    .tab-btn {
+      appearance: none;
+      background: rgba(255, 248, 236, 0.05);
+      border: 1px solid var(--rule);
+      color: var(--paper-mid);
+      font: 700 13.5px/1.2 "Be Vietnam Pro", sans-serif;
+      padding: 10px 18px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold-hot);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.18) 100%);
+      border-color: var(--gold);
+      color: var(--gold-hot);
+    }
+    .tab-badge {
+      background: rgba(255, 184, 77, 0.2);
+      color: var(--gold-hot);
+      font: 700 11.5px/1 "IBM Plex Mono", monospace;
+      padding: 3px 7px;
+      border-radius: 10px;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 5, 3, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 780px;
+      max-height: 88vh;
+      background: var(--panel);
+      border: 1px solid var(--rule-strong);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--rule);
+      background: var(--panel-2);
+    }
+    .modal-body {
+      padding: 16px 18px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--paper-mid);
+    }
+    .code-box {
+      background: #0b0805;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 12px;
+      font: 400 12px/1.5 "IBM Plex Mono", monospace;
+      color: #fde68a;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 10px 0 0;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="header">
       <div>
-        <div class="kicker">TRƯỜNG ĐẠI HỌC TÂY NGUYÊN  •  QUẢN TRỊ LƯU BÚT 20/11</div>
-        <h1>DANH SÁCH NGƯỜI ĐÃ CHÚC THẦY CÔ</h1>
+        <div class="kicker">TRƯỜNG ĐẠI HỌC TÂY NGUYÊN  •  QUẢN TRỊ LƯU BÚT & CHECK-IN 20/11</div>
+        <h1>QUẢN LÝ LỜI CHÚC & NGƯỜI CHECK-IN</h1>
       </div>
       <div class="nav-actions">
-        <a class="btn" href="index.html">← Quay lại Không gian 3D</a>
+        <a class="btn" href="Ngay-Nha-Giao-Viet-Nam/index.html">← Quay lại Không gian 3D</a>
+        <button class="btn" id="btn-gas-code">⚙ Mã Apps Script (Drive)</button>
         <button class="btn primary" id="btn-export">⬇ Tải file Excel (CSV)</button>
       </div>
     </div>
@@ -244,7 +333,11 @@
         <div class="stat-val" id="st-total">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Số người gửi khác nhau</div>
+        <div class="stat-label">Người đã Check-in</div>
+        <div class="stat-val" id="st-checkins">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Người gửi lời chúc</div>
         <div class="stat-val" id="st-authors">0</div>
       </div>
       <div class="stat-card">
@@ -264,6 +357,11 @@
       <div class="status-msg" id="sync-status">Đang hiển thị dữ liệu lưu trên trình duyệt hiện tại. Dán link Web App để tải dữ liệu từ file trên Google Drive của bạn.</div>
     </div>
 
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-wishes">📜 Lưu bút 20/11 <span class="tab-badge" id="badge-wishes">0</span></button>
+      <button class="tab-btn" id="tab-checkins">✨ Người Check-in Vườn Hoa <span class="tab-badge" id="badge-checkins">0</span></button>
+    </div>
+
     <div class="toolbar">
       <input class="input" id="search-inp" type="search" placeholder="Tìm kiếm theo tên người gửi hoặc nội dung lời chúc..." style="max-width:440px;">
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -274,7 +372,7 @@
 
     <div class="table-wrap">
       <table>
-        <thead>
+        <thead id="thead">
           <tr>
             <th style="width:56px;">STT</th>
             <th style="width:150px;">Thời gian</th>
@@ -288,13 +386,33 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="gas-modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong style="color:var(--gold-hot);font-size:14px;">Mã Google Apps Script (Hỗ trợ xóa Check-in & Lưu bút trên Drive)</strong>
+        <div style="display:flex;gap:8px;">
+          <button class="btn primary" id="btn-copy-gas" style="padding:6px 12px;font-size:12px;">📋 Sao chép mã</button>
+          <button class="btn" id="btn-close-gas" style="padding:6px 12px;font-size:12px;">✕ Đóng</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        Nếu khi bấm <strong>Xóa</strong> ở tab <em>Người Check-in Vườn Hoa</em> mà tải lại trang vẫn thấy tên cũ từ Google Drive, hãy dán đoạn mã dưới đây vào <strong>Code.gs</strong> trong dự án Google Apps Script của bạn rồi chọn <strong>Deploy → Manage deployments → Edit → New version → Deploy</strong>:
+        <pre class="code-box" id="gas-code-pre"></pre>
+      </div>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY = "tnu_2011_wishes_v2";
+    const CHECKIN_KEY = "tnu_checkin_fireflies_v1";
+    const CHECKIN_NAME_KEY = "tnu_checkin_name";
     const URL_KEY = "tnu_gsheet_url";
     // URL Google Drive Apps Script Web App đã được gắn sẵn:
     const DEFAULT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyzLN223-7CqVQdUv5V1plpg30nSRJd4Ml4qY2ohknUCcQkZJyqRGwsqJe4sYDArsG-/exec";
 
+    let activeTab = "wishes";
     let wishes = [];
+    let checkins = [];
 
     function esc(s) {
       return String(s || "").replace(/[&<>"']/g, c => ({
@@ -313,74 +431,209 @@
       return [];
     }
 
-    function render() {
-      const q = (document.getElementById("search-inp").value || "").trim().toLowerCase();
-      const indexed = wishes.map((w, origIdx) => ({ w, origIdx }));
-      const filtered = q
-        ? indexed.filter(({ w }) =>
-            (w.author || "").toLowerCase().includes(q) ||
-            (w.text || "").toLowerCase().includes(q)
-          )
-        : indexed;
+    function normalizeCheckins(arr) {
+      if (!Array.isArray(arr)) return [];
+      return arr
+        .map(item => {
+          if (typeof item === "string") {
+            return { name: item.trim(), time: "20/11" };
+          }
+          if (item && typeof item === "object") {
+            return {
+              name: String(item.name || item.author || "").trim(),
+              time: String(item.time || "20/11").trim()
+            };
+          }
+          return null;
+        })
+        .filter(x => x && x.name);
+    }
 
+    function loadLocalCheckins() {
+      try {
+        const raw = localStorage.getItem(CHECKIN_KEY);
+        if (raw) return normalizeCheckins(JSON.parse(raw));
+      } catch {}
+      return [];
+    }
+
+    function saveLocalCheckins(list) {
+      const names = list.map(x => x.name).filter(Boolean).slice(0, 24);
+      localStorage.setItem(CHECKIN_KEY, JSON.stringify(names));
+    }
+
+    function updateStatsAndTabs() {
       document.getElementById("st-total").textContent = wishes.length;
+      document.getElementById("st-checkins").textContent = checkins.length;
       const uniqueAuthors = new Set(wishes.map(w => (w.author || "").trim().toLowerCase()).filter(Boolean));
       document.getElementById("st-authors").textContent = uniqueAuthors.size;
+      document.getElementById("badge-wishes").textContent = wishes.length;
+      document.getElementById("badge-checkins").textContent = checkins.length;
 
+      document.getElementById("tab-wishes").classList.toggle("active", activeTab === "wishes");
+      document.getElementById("tab-checkins").classList.toggle("active", activeTab === "checkins");
+      document.getElementById("search-inp").placeholder = activeTab === "wishes"
+        ? "Tìm kiếm theo tên người gửi hoặc nội dung lời chúc..."
+        : "Tìm kiếm theo tên người đã check-in hoặc thời gian...";
+    }
+
+    function render() {
+      updateStatsAndTabs();
+      const q = (document.getElementById("search-inp").value || "").trim().toLowerCase();
+      const thead = document.getElementById("thead");
       const tbody = document.getElementById("tbody");
-      if (!filtered.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty">Chưa có lời chúc nào phù hợp.</td></tr>';
-        return;
+
+      if (activeTab === "wishes") {
+        thead.innerHTML = `
+          <tr>
+            <th style="width:56px;">STT</th>
+            <th style="width:150px;">Thời gian</th>
+            <th style="width:230px;">Người gửi</th>
+            <th>Nội dung lời chúc 20/11</th>
+            <th style="width:92px;text-align:center;">Thao tác</th>
+          </tr>
+        `;
+        const indexed = wishes.map((w, origIdx) => ({ w, origIdx }));
+        const filtered = q
+          ? indexed.filter(({ w }) =>
+              (w.author || "").toLowerCase().includes(q) ||
+              (w.text || "").toLowerCase().includes(q)
+            )
+          : indexed;
+
+        if (!filtered.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty">Chưa có lời chúc nào phù hợp.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = filtered.map(({ w, origIdx }, idx) => `
+          <tr>
+            <td>${idx + 1}</td>
+            <td class="time-cell">${esc(w.time || "20/11")}</td>
+            <td class="author-cell">✦ ${esc(w.author || "Sinh viên ĐH Tây Nguyên")}</td>
+            <td class="wish-cell">“${esc(w.text || "")}”</td>
+            <td style="text-align:center;"><button class="btn-del" data-del-wish="${origIdx}" title="Xóa lời chúc này">🗑 Xóa</button></td>
+          </tr>
+        `).join("");
+
+        tbody.querySelectorAll("[data-del-wish]").forEach(btn => {
+          btn.addEventListener("click", () => deleteWish(+btn.dataset.delWish));
+        });
+      } else {
+        thead.innerHTML = `
+          <tr>
+            <th style="width:56px;">STT</th>
+            <th style="width:170px;">Thời gian Check-in</th>
+            <th>Tên người đã Check-in (Đom đóm Vườn Hoa)</th>
+            <th style="width:180px;">Trạng thái</th>
+            <th style="width:92px;text-align:center;">Thao tác</th>
+          </tr>
+        `;
+        const indexed = checkins.map((c, origIdx) => ({ c, origIdx }));
+        const filtered = q
+          ? indexed.filter(({ c }) =>
+              (c.name || "").toLowerCase().includes(q) ||
+              (c.time || "").toLowerCase().includes(q)
+            )
+          : indexed;
+
+        if (!filtered.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty">Chưa có người check-in nào phù hợp.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = filtered.map(({ c, origIdx }, idx) => `
+          <tr>
+            <td>${idx + 1}</td>
+            <td class="time-cell">${esc(c.time || "20/11")}</td>
+            <td class="author-cell">✨ ${esc(c.name)}</td>
+            <td style="color:#6ee7b7;font-size:12.5px;">Đã thắp sáng đom đóm</td>
+            <td style="text-align:center;"><button class="btn-del" data-del-checkin="${origIdx}" title="Xóa người check-in này">🗑 Xóa</button></td>
+          </tr>
+        `).join("");
+
+        tbody.querySelectorAll("[data-del-checkin]").forEach(btn => {
+          btn.addEventListener("click", () => deleteCheckin(+btn.dataset.delCheckin));
+        });
       }
-      tbody.innerHTML = filtered.map(({ w, origIdx }, idx) => `
-        <tr>
-          <td>${idx + 1}</td>
-          <td class="time-cell">${esc(w.time || "20/11")}</td>
-          <td class="author-cell">✦ ${esc(w.author || "Sinh viên ĐH Tây Nguyên")}</td>
-          <td class="wish-cell">“${esc(w.text || "")}”</td>
-          <td style="text-align:center;"><button class="btn-del" data-del="${origIdx}" title="Xóa lời chúc này">🗑 Xóa</button></td>
-        </tr>
-      `).join("");
-
-      tbody.querySelectorAll("[data-del]").forEach(btn => {
-        btn.addEventListener("click", () => deleteWish(+btn.dataset.del));
-      });
     }
 
-    function postDriveAction(payload) {
+    async function postDriveAction(payload) {
       const url = (document.getElementById("gsheet-url").value || "").trim();
-      if (!url) return;
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      }).catch(() => {});
+      if (!url) return false;
+      try {
+        await fetch(url, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        return true;
+      } catch {
+        return false;
+      }
     }
 
-    function deleteWish(origIdx) {
+    async function deleteWish(origIdx) {
       const target = wishes[origIdx];
       if (!target) return;
       if (!confirm('Xóa lời chúc của "' + (target.author || "Sinh viên") + '"?')) return;
       wishes.splice(origIdx, 1);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(wishes.slice(0, 100)));
-      postDriveAction({ action: "delete", time: target.time || "", author: target.author || "", text: target.text || "" });
-      const statusEl = document.getElementById("sync-status");
-      statusEl.style.color = "#fde047";
-      statusEl.textContent = "✓ Đã xóa lời chúc khỏi danh sách (đã gửi yêu cầu cập nhật lên Google Drive).";
       render();
+      const statusEl = document.getElementById("sync-status");
+      statusEl.style.color = "#7dd3fc";
+      statusEl.textContent = "Đang gửi yêu cầu xóa lời chúc lên Google Drive...";
+      await postDriveAction({ action: "delete", time: target.time || "", author: target.author || "", text: target.text || "" });
+      statusEl.style.color = "#fde047";
+      statusEl.textContent = "✓ Đã xóa lời chúc và đồng bộ xong lên Google Drive.";
     }
 
-    document.getElementById("btn-clear-all").addEventListener("click", () => {
-      if (!wishes.length) return;
-      if (!confirm("Bạn có chắc chắn muốn XÓA TẤT CẢ " + wishes.length + " lời chúc?")) return;
-      wishes = [];
-      localStorage.setItem(STORAGE_KEY, "[]");
-      postDriveAction({ action: "clear" });
-      const statusEl = document.getElementById("sync-status");
-      statusEl.style.color = "#fda4af";
-      statusEl.textContent = "✓ Đã xóa toàn bộ danh sách lời chúc.";
+    async function deleteCheckin(origIdx) {
+      const target = checkins[origIdx];
+      if (!target) return;
+      if (!confirm('Xóa người check-in "' + target.name + '" khỏi Vườn Hoa 3D & Google Drive?')) return;
+      checkins.splice(origIdx, 1);
+      saveLocalCheckins(checkins);
+      try {
+        const curName = (localStorage.getItem(CHECKIN_NAME_KEY) || "").trim().toLowerCase();
+        if (curName && curName === target.name.toLowerCase()) {
+          localStorage.removeItem(CHECKIN_NAME_KEY);
+        }
+      } catch {}
       render();
+      const statusEl = document.getElementById("sync-status");
+      statusEl.style.color = "#7dd3fc";
+      statusEl.textContent = 'Đang xóa "' + target.name + '" trên Google Drive...';
+      await postDriveAction({ action: "deleteCheckin", name: target.name || "", time: target.time || "" });
+      statusEl.style.color = "#fde047";
+      statusEl.textContent = '✓ Đã xóa "' + target.name + '" và đồng bộ xong lên Google Drive.';
+    }
+
+    document.getElementById("btn-clear-all").addEventListener("click", async () => {
+      const statusEl = document.getElementById("sync-status");
+      if (activeTab === "wishes") {
+        if (!wishes.length) return;
+        if (!confirm("Bạn có chắc chắn muốn XÓA TẤT CẢ " + wishes.length + " lời chúc?")) return;
+        wishes = [];
+        localStorage.setItem(STORAGE_KEY, "[]");
+        render();
+        statusEl.style.color = "#7dd3fc";
+        statusEl.textContent = "Đang xóa toàn bộ lời chúc trên Google Drive...";
+        await postDriveAction({ action: "clear" });
+        statusEl.style.color = "#fda4af";
+        statusEl.textContent = "✓ Đã xóa toàn bộ danh sách lời chúc trên Google Drive.";
+      } else {
+        if (!checkins.length) return;
+        if (!confirm("Bạn có chắc chắn muốn XÓA TẤT CẢ " + checkins.length + " người đã check-in?")) return;
+        checkins = [];
+        localStorage.setItem(CHECKIN_KEY, "[]");
+        try { localStorage.removeItem(CHECKIN_NAME_KEY); } catch {}
+        render();
+        statusEl.style.color = "#7dd3fc";
+        statusEl.textContent = "Đang xóa toàn bộ người Check-in trên Google Drive...";
+        await postDriveAction({ action: "clearCheckins" });
+        statusEl.style.color = "#fda4af";
+        statusEl.textContent = "✓ Đã xóa toàn bộ danh sách người Check-in trên Google Drive.";
+      }
     });
 
     async function syncSheets() {
@@ -390,35 +643,64 @@
 
       if (!url) {
         wishes = loadLocal();
+        checkins = loadLocalCheckins();
         srcEl.textContent = "Cục bộ (Trình duyệt)";
         statusEl.style.color = "#fde047";
-        statusEl.textContent = "Chưa gắn link Google Apps Script — đang hiển thị " + wishes.length + " lời chúc lưu cục bộ.";
+        statusEl.textContent = "Chưa gắn link Google Apps Script — đang hiển thị " + wishes.length + " lời chúc & " + checkins.length + " người check-in cục bộ.";
         render();
         return;
       }
 
       statusEl.style.color = "#7dd3fc";
-      statusEl.textContent = "Đang tải danh sách lời chúc từ Google Drive...";
+      statusEl.textContent = "Đang tải dữ liệu Lưu bút & Check-in từ Google Drive...";
       try {
-        const res = await fetch(url);
-        const data = await res.json();
+        const sep = url.includes("?") ? "&" : "?";
+        const ts = Date.now();
+        const [wishRes, checkinRes] = await Promise.all([
+          fetch(url + sep + "_t=" + ts, { cache: "no-store" }),
+          fetch(url + sep + "type=checkins&_t=" + ts, { cache: "no-store" }).catch(() => null)
+        ]);
+        const data = await wishRes.json();
         if (Array.isArray(data)) {
           wishes = data.filter(x => x && x.text).reverse();
           localStorage.setItem(STORAGE_KEY, JSON.stringify(wishes.slice(0, 100)));
-          srcEl.textContent = "Google Drive (Online)";
-          statusEl.style.color = "#34d399";
-          statusEl.textContent = "✓ Đã đồng bộ thành công " + wishes.length + " lời chúc từ Google Drive!";
         } else {
-          throw new Error("Dữ liệu trả về không đúng định dạng mảng JSON.");
+          throw new Error("Dữ liệu lưu bút không đúng định dạng mảng JSON.");
         }
+
+        if (checkinRes && checkinRes.ok) {
+          try {
+            const cData = await checkinRes.json();
+            if (Array.isArray(cData)) {
+              checkins = normalizeCheckins(cData).reverse();
+              saveLocalCheckins(checkins);
+            }
+          } catch {}
+        } else {
+          checkins = loadLocalCheckins();
+        }
+
+        srcEl.textContent = "Google Drive (Online)";
+        statusEl.style.color = "#34d399";
+        statusEl.textContent = "✓ Đã đồng bộ " + wishes.length + " lời chúc & " + checkins.length + " người check-in từ Google Drive!";
       } catch (err) {
         wishes = loadLocal();
+        checkins = loadLocalCheckins();
         srcEl.textContent = "Cục bộ (Fallback)";
         statusEl.style.color = "#fda4af";
         statusEl.textContent = "Không kết nối được Google Drive (" + err.message + "). Đang hiển thị dữ liệu cục bộ.";
       }
       render();
     }
+
+    document.getElementById("tab-wishes").addEventListener("click", () => {
+      activeTab = "wishes";
+      render();
+    });
+    document.getElementById("tab-checkins").addEventListener("click", () => {
+      activeTab = "checkins";
+      render();
+    });
 
     document.getElementById("btn-save-sync").addEventListener("click", () => {
       const url = document.getElementById("gsheet-url").value.trim();
@@ -430,30 +712,145 @@
     document.getElementById("search-inp").addEventListener("input", render);
 
     document.getElementById("btn-export").addEventListener("click", () => {
-      if (!wishes.length) return;
-      const csvRows = [["STT", "Thời gian", "Người gửi", "Lời chúc"]];
-      wishes.forEach((w, i) => {
-        csvRows.push([
-          i + 1,
-          w.time || "",
-          w.author || "",
-          w.text || ""
-        ]);
+      if (activeTab === "wishes") {
+        if (!wishes.length) return;
+        const csvRows = [["STT", "Thời gian", "Người gửi", "Lời chúc"]];
+        wishes.forEach((w, i) => csvRows.push([i + 1, w.time || "", w.author || "", w.text || ""]));
+        const csvContent = "\uFEFF" + csvRows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(",")).join("\r\n");
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([csvContent], { type: "text/csv;charset=utf-8;" }));
+        a.download = "LuuBut_20_11_DaiHocTayNguyen.csv";
+        a.click();
+      } else {
+        if (!checkins.length) return;
+        const csvRows = [["STT", "Thời gian Check-in", "Tên người Check-in"]];
+        checkins.forEach((c, i) => csvRows.push([i + 1, c.time || "", c.name || ""]));
+        const csvContent = "\uFEFF" + csvRows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(",")).join("\r\n");
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([csvContent], { type: "text/csv;charset=utf-8;" }));
+        a.download = "Checkin_20_11_DaiHocTayNguyen.csv";
+        a.click();
+      }
+    });
+
+    const GAS_CODE = `const WISH_FILE = "LuuBut_20_11_DH_TayNguyen.json";
+const CHECKIN_FILE = "Checkin_20_11_DH_TayNguyen.json";
+
+function getOrCreateJsonFiles(fileName) {
+  const it = DriveApp.getFilesByName(fileName);
+  const files = [];
+  while (it.hasNext()) files.push(it.next());
+  if (files.length === 0) {
+    files.push(DriveApp.createFile(fileName, "[]", MimeType.PLAIN_TEXT));
+  }
+  return files;
+}
+
+function readJsonList(fileName) {
+  const files = getOrCreateJsonFiles(fileName);
+  try {
+    const arr = JSON.parse(files[0].getBlob().getDataAsString("UTF-8") || "[]");
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function writeJsonList(fileName, arr) {
+  const files = getOrCreateJsonFiles(fileName);
+  const content = JSON.stringify(arr, null, 2);
+  for (let i = 0; i < files.length; i++) files[i].setContent(content);
+}
+
+function extractCheckinName(item) {
+  if (typeof item === "string") return item.trim();
+  if (item && typeof item === "object") return String(item.name || item.author || "").trim();
+  return "";
+}
+
+function doGet(e) {
+  const type = e && e.parameter && e.parameter.type ? String(e.parameter.type).trim() : "wishes";
+  const fileName = type === "checkins" ? CHECKIN_FILE : WISH_FILE;
+  return ContentService.createTextOutput(JSON.stringify(readJsonList(fileName)))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    const rawBody = (e && e.postData && e.postData.contents) ? e.postData.contents : "{}";
+    const body = JSON.parse(rawBody);
+    const action = String(body.action || "add").trim();
+
+    if (action === "checkin") {
+      const list = readJsonList(CHECKIN_FILE);
+      const name = String(body.name || "").trim();
+      const key = name.toLowerCase();
+      if (name && !list.some(x => extractCheckinName(x).toLowerCase() === key)) {
+        list.push({ name: name, time: String(body.time || "").trim() });
+        writeJsonList(CHECKIN_FILE, list);
+      }
+    } else if (action === "deleteCheckin") {
+      const targetName = String(body.name || "").trim().toLowerCase();
+      const targetTime = String(body.time || "").trim();
+      const list = readJsonList(CHECKIN_FILE).filter(x => {
+        const nm = extractCheckinName(x).toLowerCase();
+        const tm = (x && typeof x === "object") ? String(x.time || "").trim() : "";
+        if (targetTime && targetTime !== "20/11" && tm) {
+          return !(nm === targetName && tm === targetTime);
+        }
+        return nm !== targetName;
       });
-      const csvContent = "\uFEFF" + csvRows.map(r =>
-        r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(",")
-      ).join("\r\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "LuuBut_20_11_DaiHocTayNguyen.csv";
-      a.click();
+      writeJsonList(CHECKIN_FILE, list);
+    } else if (action === "clearCheckins") {
+      writeJsonList(CHECKIN_FILE, []);
+    } else if (action === "delete") {
+      const list = readJsonList(WISH_FILE).filter(x =>
+        !(String(x.author || "") === String(body.author || "") &&
+          String(x.text || "") === String(body.text || "") &&
+          String(x.time || "") === String(body.time || ""))
+      );
+      writeJsonList(WISH_FILE, list);
+    } else if (action === "clear") {
+      writeJsonList(WISH_FILE, []);
+    } else {
+      const list = readJsonList(WISH_FILE);
+      if (body.text) {
+        list.push({
+          author: String(body.author || "").trim(),
+          text: String(body.text || "").trim(),
+          time: String(body.time || "").trim()
+        });
+        writeJsonList(WISH_FILE, list);
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ ok: true, action: action }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}`;
+
+    const gasModal = document.getElementById("gas-modal");
+    document.getElementById("gas-code-pre").textContent = GAS_CODE;
+    document.getElementById("btn-gas-code").addEventListener("click", () => gasModal.classList.add("open"));
+    document.getElementById("btn-close-gas").addEventListener("click", () => gasModal.classList.remove("open"));
+    gasModal.addEventListener("click", (e) => { if (e.target === gasModal) gasModal.classList.remove("open"); });
+    document.getElementById("btn-copy-gas").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(GAS_CODE);
+        const b = document.getElementById("btn-copy-gas");
+        b.textContent = "✓ Đã sao chép!";
+        setTimeout(() => { b.textContent = "📋 Sao chép mã"; }, 1800);
+      } catch {}
     });
 
     // Init
     const savedUrl = localStorage.getItem(URL_KEY) || DEFAULT_WEBAPP_URL;
     document.getElementById("gsheet-url").value = savedUrl;
     wishes = loadLocal();
+    checkins = loadLocalCheckins();
     render();
     if (savedUrl) syncSheets();
   </script>
