@@ -7566,6 +7566,19 @@ async function C1(i) {
           localStorage.setItem("tnu_checkin_fireflies_v1", JSON.stringify(saved.slice(0, 24)));
         }
       } catch {}
+      let url = (localStorage.getItem("tnu_gsheet_url") || GOOGLE_SHEETS_WEBAPP_URL || "").trim();
+      if (url) {
+        fetch(url, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "checkin",
+            name: clean,
+            time: new Date().toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "numeric" })
+          })
+        }).catch(() => {});
+      }
     }
 
     if (checkinFireflies.length >= 24) {
@@ -7609,7 +7622,7 @@ async function C1(i) {
     });
   }
 
-  // Restore saved Check-in Fireflies on Vườn Hoa
+  // Restore saved Check-in Fireflies on Vườn Hoa (local + Google Drive)
   try {
     let savedFireflies = JSON.parse(localStorage.getItem("tnu_checkin_fireflies_v1") || "[]");
     if (Array.isArray(savedFireflies)) {
@@ -7618,6 +7631,26 @@ async function C1(i) {
       }
     }
   } catch {}
+  (async function fetchCheckinsFromDrive() {
+    let url = (localStorage.getItem("tnu_gsheet_url") || GOOGLE_SHEETS_WEBAPP_URL || "").trim();
+    if (!url) return;
+    try {
+      let sep = url.includes("?") ? "&" : "?";
+      let res = await fetch(url + sep + "type=checkins");
+      let data = await res.json();
+      if (Array.isArray(data)) {
+        let names = [];
+        for (let item of data) {
+          let nm = typeof item === "string" ? item : (item && (item.name || item.author));
+          if (nm) {
+            names.push(nm);
+            spawnCheckinFirefly(nm, false);
+          }
+        }
+        try { localStorage.setItem("tnu_checkin_fireflies_v1", JSON.stringify(names.slice(-24).reverse())); } catch {}
+      }
+    } catch {}
+  })();
 
   // =========================================================================
   // STATION 5: ĐÀI KỶ NIỆM TRI ÂN 20/11 (x = 0, z = -16)
