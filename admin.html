@@ -321,7 +321,7 @@
         <h1>QUẢN LÝ LỜI CHÚC & NGƯỜI CHECK-IN</h1>
       </div>
       <div class="nav-actions">
-        <a class="btn" href="Ngay-Nha-Giao-Viet-Nam/index.html">← Quay lại Không gian 3D</a>
+        <a class="btn" href="index.html">← Quay lại Không gian 3D</a>
         <button class="btn" id="btn-gas-code">⚙ Mã Apps Script (Drive)</button>
         <button class="btn primary" id="btn-export">⬇ Tải file Excel (CSV)</button>
       </div>
@@ -408,7 +408,7 @@
     const CHECKIN_NAME_KEY = "tnu_checkin_name";
     const URL_KEY = "tnu_gsheet_url";
     // URL Google Drive Apps Script Web App đã được gắn sẵn:
-    const DEFAULT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyzLN223-7CqVQdUv5V1plpg30nSRJd4Ml4qY2ohknUCcQkZJyqRGwsqJe4sYDArsG-/exec";
+    const DEFAULT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyxnZ8yhqoT89KS9B005BaToO5wlymldDW7lGIyeKQkehdIZsngWK-TmOnU6WW-ZXo/exec";
 
     let activeTab = "wishes";
     let wishes = [];
@@ -668,11 +668,14 @@
           throw new Error("Dữ liệu lưu bút không đúng định dạng mảng JSON.");
         }
 
+        let legacyCheckinEndpoint = false;
         if (checkinRes && checkinRes.ok) {
           try {
             const cData = await checkinRes.json();
             if (Array.isArray(cData)) {
-              checkins = normalizeCheckins(cData).reverse();
+              legacyCheckinEndpoint = cData.some(x => x && typeof x === "object" && ("text" in x || "author" in x) && !("name" in x));
+              const validOnly = cData.filter(x => typeof x === "string" || (x && typeof x === "object" && "name" in x));
+              checkins = normalizeCheckins(validOnly).reverse();
               saveLocalCheckins(checkins);
             }
           } catch {}
@@ -681,8 +684,13 @@
         }
 
         srcEl.textContent = "Google Drive (Online)";
-        statusEl.style.color = "#34d399";
-        statusEl.textContent = "✓ Đã đồng bộ " + wishes.length + " lời chúc & " + checkins.length + " người check-in từ Google Drive!";
+        if (legacyCheckinEndpoint) {
+          statusEl.style.color = "#fb7185";
+          statusEl.textContent = "⚠ Link Apps Script hiện tại vẫn đang chạy bản CŨ (chưa tách file Check-in nên không xóa được). Hãy dán đúng link /exec MỚI vừa Deploy xong vào ô trên rồi bấm Lưu & Đồng bộ ngay!";
+        } else {
+          statusEl.style.color = "#34d399";
+          statusEl.textContent = "✓ Đã đồng bộ " + wishes.length + " lời chúc & " + checkins.length + " người check-in từ Google Drive!";
+        }
       } catch (err) {
         wishes = loadLocal();
         checkins = loadLocalCheckins();
@@ -847,7 +855,11 @@ function doPost(e) {
     });
 
     // Init
-    const savedUrl = localStorage.getItem(URL_KEY) || DEFAULT_WEBAPP_URL;
+    let savedUrl = localStorage.getItem(URL_KEY) || DEFAULT_WEBAPP_URL;
+    if (savedUrl.includes("AKfycbyzLN223") || savedUrl.includes("AKfycbyZTl")) {
+      savedUrl = DEFAULT_WEBAPP_URL;
+      localStorage.setItem(URL_KEY, savedUrl);
+    }
     document.getElementById("gsheet-url").value = savedUrl;
     wishes = loadLocal();
     checkins = loadLocalCheckins();
