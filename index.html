@@ -66,6 +66,7 @@ html, body {
   height: 100%;
   display: block;
   outline: none;
+  touch-action: none;
 }
 
 #ui {
@@ -896,7 +897,7 @@ html, body {
   align-items: center;
   justify-content: center;
   padding: clamp(18px, 4vw, 48px);
-  background: radial-gradient(circle at 30% 50%, rgba(22, 15, 9, 0.78) 0%, rgba(12, 8, 5, 0.56) 100%);
+  background: radial-gradient(circle at 50% 50%, rgba(22, 15, 9, 0.72) 0%, rgba(12, 8, 5, 0.56) 100%);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   pointer-events: none;
@@ -911,8 +912,8 @@ html, body {
   overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
   gap: 28px;
 }
 .m-left {
@@ -1138,29 +1139,32 @@ html, body {
   pointer-events: none;
   display: none;
   z-index: 30;
+  touch-action: none;
 }
 .touch.on {
   display: block;
 }
 .t-stick {
   position: absolute;
-  top: 0;
-  left: 0;
+  left: 84px;
+  bottom: 84px;
   width: 112px;
   height: 112px;
   margin-left: -56px;
-  margin-top: -56px;
-  display: none;
+  margin-bottom: -56px;
+  display: block;
+  opacity: 0.72;
   pointer-events: none;
+  transition: opacity 0.15s ease;
 }
 .t-stick.on {
-  display: block;
+  opacity: 1;
 }
 .t-ring {
   position: absolute;
   inset: 0;
-  border: 2px solid rgba(255, 184, 77, 0.5);
-  background: rgba(20, 14, 9, 0.35);
+  border: 2px solid rgba(255, 184, 77, 0.55);
+  background: rgba(20, 14, 9, 0.42);
   border-radius: 50%;
 }
 .t-nub {
@@ -1169,16 +1173,17 @@ html, body {
   left: 34px;
   width: 44px;
   height: 44px;
-  background: rgba(255, 184, 77, 0.85);
+  background: rgba(255, 184, 77, 0.88);
+  box-shadow: 0 0 12px rgba(255, 184, 77, 0.5);
   border-radius: 50%;
 }
 .t-btn {
   position: absolute;
   pointer-events: auto;
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: rgba(20, 14, 9, 0.78);
+  background: rgba(20, 14, 9, 0.82);
   border: 1.5px solid var(--rule-strong);
   color: var(--paper);
   font: 700 10px/1.1 var(--f-sans);
@@ -1186,22 +1191,168 @@ html, body {
   align-items: center;
   justify-content: center;
   text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 .t-btn.active, .t-btn.on {
   border-color: var(--signal);
-  background: rgba(255, 184, 77, 0.28);
+  background: rgba(255, 184, 77, 0.34);
   color: var(--signal-hot);
 }
-.t-interact { right: 26px; bottom: 110px; width: 70px; height: 70px; }
-.t-jump { right: 108px; bottom: 42px; }
-.t-ads { right: 26px; bottom: 192px; }
-.t-reload { right: 108px; bottom: 124px; }
-.t-pause { right: 20px; top: 20px; width: 44px; height: 44px; }
+.t-interact { right: 22px; bottom: 96px; width: 72px; height: 72px; font-size: 11px; }
+.t-jump { right: 106px; bottom: 28px; }
+.t-ads { right: 22px; bottom: 180px; }
+.t-reload { right: 106px; bottom: 110px; }
+.t-pause { right: 14px; top: 14px; width: 42px; height: 42px; font-size: 13px; }
 
 @media (max-width: 900px) {
-  .h-compass { width: 42vw; }
-  .h-obj { width: 240px; padding: 9px 11px; }
-  .comms { width: calc(100vw - 32px); bottom: 105px; }
+  :root { --pad: 10px; }
+  .h-compass {
+    top: 10px;
+    width: min(240px, 48vw);
+    height: 44px;
+  }
+  .h-compass-Window { height: 28px; }
+  .h-obj {
+    top: 62px;
+    left: 10px;
+    width: min(210px, 52vw);
+    padding: 8px 10px;
+    gap: 4px;
+  }
+  .h-obj-text { font-size: 11.5px; }
+  .h-obj-sub { display: none; }
+  .h-toolbar {
+    top: 62px;
+    right: 10px;
+    max-width: 42vw;
+  }
+  .h-tool-row { display: none; }
+  .h-st-bar {
+    flex-direction: column;
+    gap: 3px;
+    padding: 4px;
+  }
+  .h-st-btn {
+    font-size: 10px;
+    padding: 4px 6px;
+    text-align: right;
+  }
+  .h-tribute-card, .h-campus-status, .h-lockhint {
+    display: none;
+  }
+  .h-prompt {
+    top: calc(50% + 28px);
+    max-width: 90vw;
+    padding: 6px 12px 6px 8px;
+  }
+  .h-prompt-txt {
+    font-size: 11.5px;
+    white-space: normal;
+  }
+  .comms {
+    width: calc(100vw - 24px);
+    min-width: 0;
+    bottom: 168px;
+    padding: 9px 12px;
+  }
+  .comms-text { font-size: 12px; }
+}
+
+/* === MOBILE LANDSCAPE MODE (MÀN HÌNH NGANG) === */
+@media (max-height: 540px) and (max-width: 960px) {
+  :root { --pad: 8px; }
+  .h-compass {
+    top: 8px;
+    width: min(200px, 25vw);
+    height: 38px;
+  }
+  .h-compass-Window { height: 24px; }
+  .h-obj {
+    top: 8px;
+    left: 10px;
+    width: min(215px, 27vw);
+    padding: 7px 10px;
+  }
+  .h-obj-pips { gap: 4px; }
+  .h-pip { width: 11px; height: 11px; }
+  .h-toolbar {
+    top: 8px;
+    right: 56px;
+    max-width: min(255px, 31vw);
+  }
+  .h-st-bar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 3px;
+  }
+  .h-st-btn {
+    font-size: 9.5px;
+    padding: 4px 6px;
+  }
+  .t-stick {
+    left: 74px;
+    bottom: 72px;
+    width: 100px;
+    height: 100px;
+    margin-left: -50px;
+    margin-bottom: -50px;
+  }
+  .t-nub { top: 30px; left: 30px; width: 40px; height: 40px; }
+  .t-interact { right: 18px; bottom: 72px; width: 64px; height: 64px; font-size: 10.5px; }
+  .t-jump { right: 94px; bottom: 18px; width: 50px; height: 50px; }
+  .t-ads { right: 18px; bottom: 146px; width: 50px; height: 50px; }
+  .t-reload { right: 94px; bottom: 82px; width: 50px; height: 50px; }
+  .t-pause { right: 10px; top: 8px; width: 40px; height: 40px; }
+  .comms {
+    bottom: 10px;
+    width: min(440px, 48vw);
+    padding: 7px 12px;
+  }
+  .comms-text { font-size: 11.5px; line-height: 1.4; }
+  .h-prompt { top: calc(50% + 22px); }
+  .menu { padding: 10px 18px; }
+  .m-inner { width: 96vw; max-height: 94vh; }
+  .m-left { max-width: 96vw; width: 100%; padding: 14px 20px; }
+  .m-title { font-size: clamp(28px, 4.4vw, 44px); }
+  .m-lead { font-size: 12.5px; margin-bottom: 10px; }
+  .st-card { width: 95vw; max-height: 94vh; padding: 14px 20px; }
+}
+
+/* Rotate-to-landscape hint banner in portrait on touch devices */
+.rotate-tip {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: rgba(20, 14, 9, 0.94);
+  border: 1px solid var(--signal);
+  border-radius: 999px;
+  color: var(--signal-hot);
+  font: 600 11.5px/1.2 var(--f-sans);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+  white-space: nowrap;
+}
+html.is-touch.is-portrait .rotate-tip.show {
+  display: flex;
+}
+.rotate-tip button {
+  appearance: none;
+  background: rgba(255, 184, 77, 0.2);
+  border: 1px solid var(--signal);
+  color: var(--paper);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -6492,7 +6643,7 @@ var STATIONS_DATA = [
     code: "TRẠM 01",
     short: "CỔNG TRƯỜNG",
     title: "Cổng Trường ĐH Tây Nguyên & Lịch Sử 20/11",
-    subtitle: "Khởi nguồn truyền thống Tôn sư trọng đạo & dấu ấn mái trường Tây nguyên từ năm 1977",
+    subtitle: "Khởi nguồn truyền thống Tôn sư trọng đạo & dấu ấn mái trường Cao nguyên từ năm 1977",
     pos: [0, 0, 18],
     lookAt: [0, 3.2, 22],
     teleportPos: [0, 0, 12.5],
@@ -6571,28 +6722,27 @@ var STATIONS_DATA = [
     id: "garden",
     index: 3,
     code: "TRẠM 04",
-    short: "VƯỜN HOA",
-    title: "Vườn Hoa Tri Ân — Tương Tác Sáng Tạo",
-    subtitle: "Thắp sáng những đóa hướng dương, dã quỳ Tây Nguyên và gửi gắm lời chúc 20/11 của riêng bạn",
+    short: "VƯỜN HOA (CHECK-IN)",
+    title: "Vườn Hoa Tri Ân — Khu Vực Check-in 20/11",
+    subtitle: "Điền tên của bạn để Check-in, thắp sáng vườn hoa hướng dương & dã quỳ Tây Nguyên và hoàn thành nhiệm vụ",
     pos: [-14, 0, -14],
     lookAt: [-14, 1.6, -14],
     teleportPos: [-9.8, 0, -10.5],
     teleportYaw: Math.PI * 0.75,
-    zoneName: "Vườn Hoa Hướng Dương & Dã Quỳ Tri Ân",
-    prompt: "Thắp sáng Hoa Tri Ân & Viết lời chúc 20/11 lên Đài Kỷ Niệm 3D",
-    voiceover: "Trạm 4 — Vườn Hoa Tri Ân. Hãy thắp sáng những đóa hoa hướng dương và hoa dã quỳ vàng rực nắng Tây Nguyên, rồi viết lời chúc 20/11 từ trái tim bạn.",
+    zoneName: "Vườn Hoa Hướng Dương & Dã Quỳ — Khu Check-in",
+    prompt: "Check-in Vườn Hoa Tri Ân (Điền tên để hoàn thành Trạm 4)",
+    voiceover: "Trạm 4 — Khu vực Check-in Vườn Hoa Tri Ân. Chỉ cần điền tên của bạn để thắp sáng những đóa hoa hướng dương và hoàn thành nhiệm vụ!",
     poem: "“Hoa hướng dương luôn hướng về mặt trời,\nHoa dã quỳ nở vàng miền đất đỏ,\nCũng như lớp lớp học trò luôn hướng về thầy cô với lòng biết ơn vẹn nguyên.”",
     body: [
       "Mỗi dịp tháng 11 về, khi sắc vàng hoa dã quỳ nở rộ khắp các triền đồi Tây Nguyên cũng là lúc sân trường Đại Học Tây Nguyên rộn ràng sắc hoa tri ân.",
-      "Tại Vườn Hoa Tri Ân này, mỗi đóa hoa được thắp sáng tượng trưng cho một lời cảm ơn gửi đến những người thầy, người cô đã kiên nhẫn dìu dắt chúng ta qua năm tháng giảng đường.",
-      "Bạn có thể chọn một thông điệp gợi ý hoặc tự tay viết lời chúc 20/11 và tên của mình bên dưới. Lời chúc của bạn sẽ được khắc trực tiếp bằng ánh sáng vàng lên Bia Lưu Bút 3D tại Đài Kỷ Niệm Trung Tâm!"
+      "Đây là khu vực Check-in Ký ức 20/11: bạn chỉ cần điền tên của mình (hoặc tên lớp/khoa) bên dưới và bấm xác nhận là toàn bộ 12 đóa hoa hướng dương sẽ bừng sáng và hoàn thành Trạm 4!"
     ],
     highlights: [
       { title: "Hoa Hướng Dương Tri Thức", desc: "Biểu tượng của niềm tin, sự ngưỡng mộ và khát vọng vươn tới ánh sáng tri thức." },
       { title: "Hoa Dã Quỳ Tây Nguyên", desc: "Sắc vàng đặc trưng của tháng 11 phố núi Buôn Ma Thuột – bền bỉ, mộc mạc và nồng ấm." },
-      { title: "Lưu Bút 3D Thời Gian Thực", desc: "Lời chúc của bạn được dựng trực tiếp lên bề mặt 3D của Đài Kỷ Niệm trong thế giới ảo." }
+      { title: "Check-in Nhanh 20/11", desc: "Chỉ cần điền tên để ghi dấu ấn tại Vườn Hoa Tri Ân ĐH Tây Nguyên." }
     ],
-    activityType: "wish"
+    activityType: "checkin"
   },
   {
     id: "monument",
@@ -6667,20 +6817,37 @@ var CHALK_LESSONS = [
   }
 ];
 
+var GOOGLE_SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyzLN223-7CqVQdUv5V1plpg30nSRJd4Ml4qY2ohknUCcQkZJyqRGwsqJe4sYDArsG-/exec"; // URL Google Drive Apps Script Web App
+
 var PRESET_WISHES = [
   {
     author: "Tập thể Sinh viên Trường Đại Học Tây Nguyên",
-    text: "Nhân ngày Nhà giáo Việt Nam 20/11, chúng em kính chúc quý Thầy Cô Trường Đại Học Tây Nguyên luôn dồi dào sức khỏe, hạnh phúc và mãi là ngọn hải đăng soi sáng hành trình tri thức giữa đại ngàn Tây Nguyên!"
+    text: "Nhân ngày Nhà giáo Việt Nam 20/11, chúng em kính chúc quý Thầy Cô Trường Đại Học Tây Nguyên luôn dồi dào sức khỏe, hạnh phúc và mãi là ngọn hải đăng soi sáng hành trình tri thức giữa đại ngàn Tây Nguyên!",
+    time: "20/11"
   },
   {
     author: "Thế hệ Sinh viên Công nghệ & Sáng tạo trẻ",
-    text: "Cảm ơn Thầy Cô đã truyền cho chúng em niềm đam mê khoa học và bài học làm người. Chúng em hứa sẽ nỗ lực làm chủ công nghệ, viết tiếp niềm tự hào của mái trường Đại Học Tây Nguyên!"
-  },
-  {
-    author: "Cựu Sinh viên & Học trò phố núi Buôn Ma Thuột",
-    text: "Dù đi khắp bốn phương trời, chúng em vẫn luôn nhớ về mái trường Đại Học Tây Nguyên đầy nắng gió và những bài giảng ấm áp của Thầy Cô. Kính chúc Thầy Cô một mùa 20/11 trọn vẹn niềm vui!"
+    text: "Cảm ơn Thầy Cô đã truyền cho chúng em niềm đam mê khoa học và bài học làm người. Chúng em hứa sẽ nỗ lực làm chủ công nghệ, viết tiếp niềm tự hào của mái trường Đại Học Tây Nguyên!",
+    time: "20/11"
   }
 ];
+
+var WISHES_STORAGE_KEY = "tnu_2011_wishes_v2";
+function loadLocalWishes() {
+  try {
+    let raw = localStorage.getItem(WISHES_STORAGE_KEY);
+    if (raw) {
+      let arr = JSON.parse(raw);
+      if (Array.isArray(arr) && arr.length) return arr;
+    }
+  } catch {}
+  return PRESET_WISHES.slice();
+}
+function saveLocalWishes(list) {
+  try {
+    localStorage.setItem(WISHES_STORAGE_KEY, JSON.stringify(list.slice(0, 100)));
+  } catch {}
+}
 
 function makeVietnameseBoardTexture(renderer, width, height, drawFn) {
   let canvas = document.createElement("canvas");
@@ -7215,13 +7382,13 @@ async function C1(i) {
     ctx.textAlign = "center";
     ctx.fillStyle = "#b45309";
     ctx.font = '800 34px "Be Vietnam Pro", sans-serif';
-    ctx.fillText("SỔ LƯU BÚT 20/11", w * 0.25, 110);
+    ctx.fillText("CHECK-IN 20/11", w * 0.25, 110);
     ctx.fillText("VƯỜN HOA TRI ÂN", w * 0.75, 110);
 
     ctx.fillStyle = "#1c1917";
     ctx.font = '500 26px "Be Vietnam Pro", sans-serif';
-    wrapVietnameseText(ctx, "Thắp sáng những đóa hoa hướng dương & hoa dã quỳ Tây Nguyên gửi tặng Thầy Cô.", 55, 190, w * 0.4 - 40, 42);
-    wrapVietnameseText(ctx, "Nhấn [E] để viết lời chúc 20/11 hiển thị trực tiếp lên Đài Kỷ Niệm 3D!", w * 0.55, 190, w * 0.4 - 40, 42);
+    wrapVietnameseText(ctx, "Điểm Check-in Vườn Hoa Hướng Dương & Dã Quỳ Tây Nguyên.", 55, 190, w * 0.4 - 40, 42);
+    wrapVietnameseText(ctx, "Nhấn [E] và chỉ cần điền tên của bạn để hoàn thành Trạm 4!", 55 + w * 0.5, 190, w * 0.4 - 40, 42);
   });
   let gardenBookMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.25, 0.78), new THREE.MeshBasicMaterial({ map: gardenBookTex.texture }));
   gardenBookMesh.position.set(-14, 1.16, -14);
@@ -7261,11 +7428,126 @@ async function C1(i) {
   }
 
   // =========================================================================
+  // CHECK-IN FIREFLIES (ĐOM ĐÓM ÁNH SÁNG MANG TÊN NGƯỜI CHECK-IN TẠI VƯỜN HOA)
+  // =========================================================================
+  let checkinFireflies = [];
+  let fireflyNamesSeen = new Set();
+
+  function makeFireflyLabelTexture(name) {
+    let canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 128;
+    let ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, 512, 128);
+
+    // Pill background
+    ctx.fillStyle = "rgba(18, 12, 6, 0.82)";
+    ctx.beginPath();
+    ctx.roundRect(16, 22, 480, 84, 42);
+    ctx.fill();
+    ctx.strokeStyle = "#fde047";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#fff8ec";
+    let label = "✦ " + String(name || "Sinh viên ĐH Tây Nguyên");
+    if (label.length > 28) label = label.slice(0, 26) + "...";
+    ctx.font = '700 32px "Be Vietnam Pro", sans-serif';
+    ctx.fillText(label, 256, 65);
+
+    let tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.needsUpdate = true;
+    return tex;
+  }
+
+  function spawnCheckinFirefly(name, persist = false) {
+    let clean = String(name || "").trim();
+    if (!clean) return;
+    let key = clean.toLowerCase();
+    if (fireflyNamesSeen.has(key)) return;
+    fireflyNamesSeen.add(key);
+
+    if (persist) {
+      try {
+        let saved = JSON.parse(localStorage.getItem("tnu_checkin_fireflies_v1") || "[]");
+        if (!Array.isArray(saved)) saved = [];
+        if (!saved.some(x => String(x).toLowerCase() === key)) {
+          saved.unshift(clean);
+          localStorage.setItem("tnu_checkin_fireflies_v1", JSON.stringify(saved.slice(0, 24)));
+        }
+      } catch {}
+    }
+
+    if (checkinFireflies.length >= 24) {
+      let oldest = checkinFireflies.shift();
+      root.remove(oldest.group);
+    }
+
+    let fg = new THREE.Group();
+    let idx = checkinFireflies.length;
+    let radius = 1.6 + (idx % 5) * 0.75;
+    let baseAngle = (idx * 2.39996) % (Math.PI * 2);
+    let baseY = 1.55 + (idx % 4) * 0.42;
+
+    let bodyMat = mats.emissive(0xffe066, 8.0);
+    let body = new THREE.Mesh(new THREE.SphereGeometry(0.085, 8, 6), bodyMat);
+    fg.add(body);
+
+    let haloMat = new THREE.MeshBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.35, depthWrite: false });
+    let halo = new THREE.Mesh(new THREE.SphereGeometry(0.20, 10, 8), haloMat);
+    fg.add(halo);
+
+    let labelTex = makeFireflyLabelTexture(clean);
+    let sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTex, transparent: true, depthWrite: false }));
+    sprite.scale.set(2.3, 0.58, 1);
+    sprite.position.y = 0.34;
+    fg.add(sprite);
+
+    fg.position.set(-14 + Math.cos(baseAngle) * radius, baseY, -14 + Math.sin(baseAngle) * radius);
+    root.add(fg);
+
+    checkinFireflies.push({
+      name: clean,
+      group: fg,
+      bodyMat,
+      halo,
+      radius,
+      baseAngle,
+      baseY,
+      speed: 0.35 + (idx % 3) * 0.12,
+      phase: idx * 1.15
+    });
+  }
+
+  // Restore saved Check-in Fireflies on Vườn Hoa
+  try {
+    let savedFireflies = JSON.parse(localStorage.getItem("tnu_checkin_fireflies_v1") || "[]");
+    if (Array.isArray(savedFireflies)) {
+      for (let k = savedFireflies.length - 1; k >= 0; k--) {
+        spawnCheckinFirefly(savedFireflies[k], false);
+      }
+    }
+  } catch {}
+
+  // =========================================================================
   // STATION 5: ĐÀI KỶ NIỆM TRI ÂN 20/11 (x = 0, z = -16)
   // =========================================================================
+  function addCircularStepCollider(cx, cz, r, topY) {
+    let s1 = r * 0.72, s2 = r * 0.96, s3 = r * 0.38;
+    phys.addBox(new THREE.Vector3(cx - s1, 0, cz - s1), new THREE.Vector3(cx + s1, topY, cz + s1), { surface: "concrete" });
+    phys.addBox(new THREE.Vector3(cx - s2, 0, cz - s3), new THREE.Vector3(cx + s2, topY, cz + s3), { surface: "concrete" });
+    phys.addBox(new THREE.Vector3(cx - s3, 0, cz - s2), new THREE.Vector3(cx + s3, topY, cz + s2), { surface: "concrete" });
+  }
+
   addCyl(7.4, 7.8, 0.32, 36, matBasalt, 0, 0.16, -16, { collide: false });
+  addCircularStepCollider(0, -16, 7.6, 0.32);
   addCyl(5.6, 5.9, 0.36, 36, matMarble, 0, 0.50, -16, { collide: false });
+  addCircularStepCollider(0, -16, 5.75, 0.68);
   addCyl(3.8, 4.1, 0.42, 32, matCreamWall, 0, 0.89, -16, { collide: false });
+  addCircularStepCollider(0, -16, 3.95, 1.10);
   addCyl(3.95, 3.95, 0.06, 32, matGlowGold, 0, 1.11, -16, { collide: false, cast: false });
 
   addBox(2.8, 3.4, 2.2, matCreamWall, 0, 2.75, -16, { surface: "concrete" });
@@ -7372,12 +7654,146 @@ async function C1(i) {
   monumentBoardMesh.position.set(0, 2.45, -14.59);
   root.add(monumentBoardMesh);
 
-  function updateMonumentWish(text, author, litCount) {
+  function updateMonumentWish(text, author, litCount, saveToWall = true) {
     if (text && text.trim()) currentWish.text = text.trim();
     if (author && author.trim()) currentWish.author = author.trim();
     if (litCount) lightUpGardenFlowers(litCount);
     monumentTex.redraw(drawMonumentBoard);
+    if (saveToWall && text && text.trim()) {
+      addCommunityWish(text.trim(), author && author.trim() ? author.trim() : "Sinh viên ĐH Tây Nguyên");
+    }
   }
+
+  // =========================================================================
+  // COMMUNITY WISHES 3D BOARD ON NORTHEAST LAWN ([11.5, 0, -11.2])
+  // =========================================================================
+  let communityWishes = loadLocalWishes();
+
+  addBox(7.2, 0.32, 2.2, matBasalt, 11.5, 0.16, -11.2, { surface: "concrete" });
+  addBox(6.6, 3.6, 0.34, matCreamWall, 11.5, 2.12, -11.2, { surface: "concrete" });
+  addBox(6.8, 0.22, 0.46, matGold, 11.5, 3.98, -11.2, { collide: false });
+  addBox(6.8, 0.22, 0.46, matGold, 11.5, 0.36, -11.2, { collide: false });
+  addBox(0.24, 3.7, 0.44, matGold, 8.22, 2.15, -11.2, { collide: false });
+  addBox(0.24, 3.7, 0.44, matGold, 14.78, 2.15, -11.2, { collide: false });
+  addBox(2.8, 0.12, 0.16, matGlowGold, 11.5, 4.14, -10.95, { collide: false, cast: false });
+
+  function drawCommunityBoard(ctx, w, h) {
+    let g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, "#1c140c");
+    g.addColorStop(0.5, "#120c07");
+    g.addColorStop(1, "#1c140c");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "#f6c453";
+    ctx.lineWidth = 14;
+    ctx.strokeRect(18, 18, w - 36, h - 36);
+    ctx.strokeStyle = "rgba(255, 215, 128, 0.38)";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(36, 36, w - 72, h - 72);
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffb84d";
+    ctx.font = '800 32px "Be Vietnam Pro", sans-serif';
+    ctx.fillText("GÓC TRI ÂN CỘNG ĐỒNG  •  TRƯỜNG ĐẠI HỌC TÂY NGUYÊN", w / 2, 86);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = '900 50px "Be Vietnam Pro", sans-serif';
+    ctx.fillText("BẢNG VÀNG LƯU BÚT GỬI THẦY CÔ 20/11", w / 2, 148);
+
+    ctx.fillStyle = "#86efac";
+    ctx.font = '600 26px "Be Vietnam Pro", sans-serif';
+    ctx.fillText("Hiện có " + communityWishes.length + " lời chúc đã lưu  •  Nhấn [E] trước bảng để Xem toàn bộ & Gửi lời chúc mới", w / 2, 194);
+
+    let showCount = Math.min(4, communityWishes.length);
+    let cardY = 225;
+    let cardH = 175;
+    for (let k = 0; k < showCount; k++) {
+      let item = communityWishes[k];
+      ctx.fillStyle = k === 0 ? "rgba(255, 184, 77, 0.13)" : "rgba(255, 248, 236, 0.05)";
+      ctx.fillRect(68, cardY, w - 136, cardH - 14);
+      ctx.strokeStyle = k === 0 ? "rgba(255, 184, 77, 0.65)" : "rgba(255, 226, 176, 0.22)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(68, cardY, w - 136, cardH - 14);
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#fde047";
+      ctx.font = '700 27px "Be Vietnam Pro", sans-serif';
+      ctx.fillText("✦ " + (item.author || "Sinh viên ĐH Tây Nguyên") + (item.time ? "  (" + item.time + ")" : ""), 94, cardY + 42);
+
+      ctx.fillStyle = "#f5ebe0";
+      ctx.font = 'italic 500 26px "Be Vietnam Pro", sans-serif';
+      let txt = String(item.text || "");
+      if (txt.length > 135) txt = txt.slice(0, 132) + "...";
+      wrapVietnameseText(ctx, "“" + txt + "”", 94, cardY + 86, w - 190, 38);
+
+      cardY += cardH;
+    }
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#fed7aa";
+    ctx.font = '600 24px "Be Vietnam Pro", sans-serif';
+    ctx.fillText("Dữ liệu lời chúc được đồng bộ trực tiếp với Google Drive của bạn", w / 2, h - 48);
+  }
+
+  let communityBoardTex = makeVietnameseBoardTexture(renderer, 2048, 1024, drawCommunityBoard);
+  let communityBoardMesh = new THREE.Mesh(new THREE.PlaneGeometry(6.1, 3.15), new THREE.MeshBasicMaterial({ map: communityBoardTex.texture }));
+  communityBoardMesh.position.set(11.5, 2.12, -11.01);
+  root.add(communityBoardMesh);
+
+  let communityBoardBack = new THREE.Mesh(new THREE.PlaneGeometry(6.1, 3.15), new THREE.MeshBasicMaterial({ map: communityBoardTex.texture }));
+  communityBoardBack.position.set(11.5, 2.12, -11.39);
+  communityBoardBack.rotation.y = Math.PI;
+  root.add(communityBoardBack);
+
+  function addCommunityWish(text, author) {
+    if (!text || !text.trim()) return;
+    let nowStr = new Date().toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "numeric" });
+    let entry = {
+      author: (author && author.trim()) || "Sinh viên ĐH Tây Nguyên",
+      text: text.trim(),
+      time: nowStr
+    };
+    // Avoid duplicate consecutive entries
+    if (communityWishes.length && communityWishes[0].text === entry.text && communityWishes[0].author === entry.author) {
+      return entry;
+    }
+    communityWishes.unshift(entry);
+    saveLocalWishes(communityWishes);
+    communityBoardTex.redraw(drawCommunityBoard);
+
+    let url = (localStorage.getItem("tnu_gsheet_url") || GOOGLE_SHEETS_WEBAPP_URL || "").trim();
+    if (url) {
+      fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(entry)
+      }).catch(() => {});
+    }
+    return entry;
+  }
+
+  async function fetchWishesFromSheets() {
+    let url = (localStorage.getItem("tnu_gsheet_url") || GOOGLE_SHEETS_WEBAPP_URL || "").trim();
+    if (!url) return { ok: false, list: communityWishes, reason: "no_url" };
+    try {
+      let res = await fetch(url);
+      let data = await res.json();
+      if (Array.isArray(data)) {
+        let cleaned = data.filter(x => x && x.text).reverse();
+        communityWishes = cleaned.length ? cleaned : [];
+        saveLocalWishes(communityWishes);
+        communityBoardTex.redraw(drawCommunityBoard);
+        return { ok: true, list: communityWishes };
+      }
+      return { ok: false, list: communityWishes, reason: "bad_format" };
+    } catch (err) {
+      return { ok: false, list: communityWishes, reason: String(err) };
+    }
+  }
+  // Auto-sync from Google Sheets on boot if URL is configured
+  fetchWishesFromSheets();
 
   // =========================================================================
   // TREES, BENCHES & STREET LAMPS
@@ -7483,6 +7899,95 @@ async function C1(i) {
     }
   }
 
+  // =========================================================================
+  // CELEBRATORY 3D FIREWORKS BEHIND BIA LƯU BÚT (z = -21 .. -28)
+  // =========================================================================
+  const MAX_FW_PARTS = 900;
+  let fwGeo = new THREE.OctahedronGeometry(0.15, 0);
+  let fwMat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+  let fwInst = new THREE.InstancedMesh(fwGeo, fwMat, MAX_FW_PARTS);
+  fwInst.frustumCulled = false;
+  fwInst.visible = false;
+  root.add(fwInst);
+
+  const FW_PALETTES = [
+    [3.8, 2.7, 0.7],  // Vàng ánh kim
+    [4.0, 0.85, 1.3], // Đỏ hoa phượng
+    [0.6, 3.6, 2.2],  // Xanh ngọc
+    [0.7, 2.8, 4.2],  // Xanh thiên thanh
+    [3.2, 1.4, 4.2],  // Tím bằng lăng
+    [4.0, 3.6, 2.8]   // Trắng ấm
+  ];
+  let fwParts = [];
+  for (let k = 0; k < MAX_FW_PARTS; k++) {
+    fwParts.push({ alive: false, x: 0, y: -50, z: 0, vx: 0, vy: 0, vz: 0, age: 0, life: 1, scale: 1, r: 1, g: 1, b: 1 });
+  }
+  let fwCursor = 0;
+  let fwRockets = [];
+  let fwActive = false;
+  let fwTimer = 0;
+  let fwDummy = new THREE.Object3D();
+  let fwCol = new THREE.Color();
+
+  function spawnFwPart(x, y, z, vx, vy, vz, life, scale, rgb) {
+    let p = fwParts[fwCursor];
+    fwCursor = (fwCursor + 1) % MAX_FW_PARTS;
+    p.alive = true;
+    p.x = x; p.y = y; p.z = z;
+    p.vx = vx; p.vy = vy; p.vz = vz;
+    p.age = 0;
+    p.life = life;
+    p.scale = scale;
+    p.r = rgb[0]; p.g = rgb[1]; p.b = rgb[2];
+  }
+
+  function launchRocket() {
+    let pal = FW_PALETTES[Math.floor(Math.random() * FW_PALETTES.length)];
+    fwRockets.push({
+      x: (Math.random() - 0.5) * 22,
+      y: 1.5,
+      z: -21.5 - Math.random() * 6.5,
+      vx: (Math.random() - 0.5) * 2.2,
+      vy: 14.5 + Math.random() * 4.5,
+      vz: (Math.random() - 0.5) * 1.5,
+      pal,
+      trailT: 0
+    });
+    if (i.audio && i.audio.fireworkLaunch) i.audio.fireworkLaunch();
+  }
+
+  function burstRocket(rk) {
+    let count = 64 + Math.floor(Math.random() * 20);
+    let isRing = Math.random() < 0.3;
+    let speedBase = 5.5 + Math.random() * 3.5;
+    for (let k = 0; k < count; k++) {
+      let theta = Math.random() * Math.PI * 2;
+      let phi = isRing ? (Math.PI * 0.5 + (Math.random() - 0.5) * 0.28) : Math.acos(2 * Math.random() - 1);
+      let spd = speedBase * (0.72 + Math.random() * 0.48);
+      let vx = Math.sin(phi) * Math.cos(theta) * spd;
+      let vy = Math.cos(phi) * spd;
+      let vz = Math.sin(phi) * Math.sin(theta) * spd;
+      spawnFwPart(rk.x, rk.y, rk.z, vx, vy, vz, 1.35 + Math.random() * 0.65, 0.9 + Math.random() * 0.6, rk.pal);
+    }
+    if (i.audio && i.audio.firework) i.audio.firework();
+  }
+
+  function setFireworks(on) {
+    let was = fwActive;
+    fwActive = !!on;
+    if (fwActive) {
+      fwInst.visible = true;
+      if (!was) {
+        launchRocket();
+        setTimeout(() => fwActive && launchRocket(), 280);
+        setTimeout(() => fwActive && launchRocket(), 560);
+        fwTimer = 0.85;
+      }
+    } else {
+      fwRockets.length = 0;
+    }
+  }
+
   let tAccum = 0;
   return {
     root,
@@ -7545,11 +8050,18 @@ async function C1(i) {
       return holoMode;
     },
     lightUpGardenFlowers,
+    spawnCheckinFirefly,
     updateMonumentWish,
     getCurrentWish() {
       return { ...currentWish, flowersLitCount };
     },
+    communityBoardPos: new THREE.Vector3(11.5, 0, -10.0),
+    getWishesList: () => communityWishes.slice(),
+    addCommunityWish,
+    fetchWishesFromSheets,
     setStationCompleted,
+    setFireworks,
+    isFireworksOn: () => fwActive,
     update(dt) {
       tAccum += dt;
       holoSphere.rotation.y = tAccum * 0.55;
@@ -7581,6 +8093,88 @@ async function C1(i) {
         b.diamond.position.y = 2.4 + Math.sin(tAccum * 2.6 + i) * 0.16;
         let pulse = 0.85 + Math.sin(tAccum * 3.0 + i) * 0.15;
         b.ring.scale.set(pulse, 1, pulse);
+      }
+
+      // Animate Check-in Fireflies fluttering over Vườn Hoa Tri Ân
+      for (let k = 0; k < checkinFireflies.length; k++) {
+        let ff = checkinFireflies[k];
+        let ang = ff.baseAngle + tAccum * ff.speed;
+        let r = ff.radius + Math.sin(tAccum * 1.3 + ff.phase) * 0.35;
+        ff.group.position.set(
+          -14 + Math.cos(ang) * r,
+          ff.baseY + Math.sin(tAccum * 2.2 + ff.phase) * 0.28,
+          -14 + Math.sin(ang) * r
+        );
+        let glow = 0.65 + 0.35 * Math.sin(tAccum * 4.5 + ff.phase);
+        ff.bodyMat.color.setRGB(1.0 * 8.0 * glow, 0.88 * 8.0 * glow, 0.4 * 8.0 * glow);
+        ff.halo.scale.setScalar(0.85 + 0.35 * glow);
+      }
+
+      // Update Celebratory 3D Fireworks
+      if (fwActive) {
+        fwTimer -= dt;
+        if (fwTimer <= 0) {
+          launchRocket();
+          if (Math.random() < 0.35) launchRocket();
+          fwTimer = 0.65 + Math.random() * 0.65;
+        }
+      }
+      for (let k = fwRockets.length - 1; k >= 0; k--) {
+        let rk = fwRockets[k];
+        rk.x += rk.vx * dt;
+        rk.y += rk.vy * dt;
+        rk.z += rk.vz * dt;
+        rk.vy -= 9.5 * dt;
+        rk.trailT -= dt;
+        if (rk.trailT <= 0) {
+          rk.trailT = 0.03;
+          spawnFwPart(rk.x, rk.y, rk.z, (Math.random() - 0.5) * 0.6, -1.2, (Math.random() - 0.5) * 0.6, 0.35, 0.55, [4.0, 2.8, 1.0]);
+        }
+        if (rk.vy <= 1.1) {
+          burstRocket(rk);
+          fwRockets.splice(k, 1);
+        }
+      }
+      if (fwInst.visible) {
+        let anyAlive = false;
+        let drag = Math.exp(-1.55 * dt);
+        for (let k = 0; k < MAX_FW_PARTS; k++) {
+          let p = fwParts[k];
+          if (!p.alive) {
+            fwDummy.scale.setScalar(0);
+            fwDummy.position.set(0, -50, 0);
+            fwDummy.updateMatrix();
+            fwInst.setMatrixAt(k, fwDummy.matrix);
+            continue;
+          }
+          p.age += dt;
+          if (p.age >= p.life) {
+            p.alive = false;
+            fwDummy.scale.setScalar(0);
+            fwDummy.updateMatrix();
+            fwInst.setMatrixAt(k, fwDummy.matrix);
+            continue;
+          }
+          anyAlive = true;
+          p.vx *= drag;
+          p.vy = p.vy * drag - 4.8 * dt;
+          p.vz *= drag;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.z += p.vz * dt;
+          let fade = 1 - p.age / p.life;
+          fwDummy.position.set(p.x, p.y, p.z);
+          fwDummy.scale.setScalar(p.scale * (0.25 + 0.75 * fade));
+          fwDummy.updateMatrix();
+          fwInst.setMatrixAt(k, fwDummy.matrix);
+          fwCol.setRGB(p.r * fade, p.g * fade, p.b * fade);
+          fwInst.setColorAt(k, fwCol);
+        }
+        fwInst.instanceMatrix.needsUpdate = true;
+        if (fwInst.instanceColor) fwInst.instanceColor.needsUpdate = true;
+        if (!anyAlive && !fwActive && fwRockets.length === 0) {
+          fwInst.visible = false;
+        }
       }
     }
   };
@@ -7845,12 +8439,102 @@ function c_(i) {
     playPianoNote(659.25, 0.18, 0.10, sfxGain);
   }
 
+  let noiseBuf = null;
+  function getNoiseBuffer() {
+    if (noiseBuf || !ctx) return noiseBuf;
+    let len = Math.floor(ctx.sampleRate * 1.2);
+    noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+    let data = noiseBuf.getChannelData(0);
+    for (let k = 0; k < len; k++) data[k] = Math.random() * 2 - 1;
+    return noiseBuf;
+  }
+
+  function playFireworkLaunch() {
+    if (!ensureCtx() || muted) return;
+    let now = ctx.currentTime;
+    let buf = getNoiseBuffer();
+    if (!buf) return;
+    let src = ctx.createBufferSource();
+    src.buffer = buf;
+    let bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.Q.value = 3.5;
+    bp.frequency.setValueAtTime(650 + Math.random() * 200, now);
+    bp.frequency.exponentialRampToValueAtTime(2400 + Math.random() * 400, now + 0.55);
+    let g = ctx.createGain();
+    g.gain.setValueAtTime(0.001, now);
+    g.gain.linearRampToValueAtTime(0.08, now + 0.08);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.58);
+    src.connect(bp);
+    bp.connect(g);
+    g.connect(sfxGain);
+    src.start(now);
+    src.stop(now + 0.6);
+  }
+
+  function playFirework() {
+    if (!ensureCtx() || muted) return;
+    let now = ctx.currentTime;
+    // 1. Deep sub-bass explosion boom
+    let osc = ctx.createOscillator();
+    let gOsc = ctx.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(145 + Math.random() * 35, now);
+    osc.frequency.exponentialRampToValueAtTime(28, now + 0.36);
+    gOsc.gain.setValueAtTime(0.45, now);
+    gOsc.gain.exponentialRampToValueAtTime(0.001, now + 0.40);
+    osc.connect(gOsc);
+    gOsc.connect(sfxGain);
+    osc.start(now);
+    osc.stop(now + 0.42);
+
+    // 2. Filtered noise blast ("ĐÙNG!")
+    let buf = getNoiseBuffer();
+    if (buf) {
+      let src = ctx.createBufferSource();
+      src.buffer = buf;
+      let lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.setValueAtTime(2800 + Math.random() * 800, now);
+      lp.frequency.exponentialRampToValueAtTime(220, now + 0.65);
+      let gNoise = ctx.createGain();
+      gNoise.gain.setValueAtTime(0.001, now);
+      gNoise.gain.linearRampToValueAtTime(0.42, now + 0.008);
+      gNoise.gain.exponentialRampToValueAtTime(0.001, now + 0.68);
+      src.connect(lp);
+      lp.connect(gNoise);
+      gNoise.connect(sfxGain);
+      src.start(now);
+      src.stop(now + 0.72);
+
+      // 3. Sparkling crackle tail ("tách tách tách")
+      let crackles = 6 + Math.floor(Math.random() * 4);
+      for (let k = 0; k < crackles; k++) {
+        let t0 = now + 0.14 + Math.random() * 0.48;
+        let cSrc = ctx.createBufferSource();
+        cSrc.buffer = buf;
+        let hp = ctx.createBiquadFilter();
+        hp.type = "highpass";
+        hp.frequency.setValueAtTime(2400 + Math.random() * 1600, t0);
+        let cGain = ctx.createGain();
+        cGain.gain.setValueAtTime(0.14, t0);
+        cGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.035);
+        cSrc.connect(hp);
+        hp.connect(cGain);
+        cGain.connect(sfxGain);
+        cSrc.start(t0, Math.random() * 0.4, 0.04);
+      }
+    }
+  }
+
   i.events.on("player:step", e => playStep(e && e.surface, e && e.sprint));
 
   return {
     start() { ensureCtx(); },
     ui: playUiClick,
     chime: playChime,
+    firework: playFirework,
+    fireworkLaunch: playFireworkLaunch,
     setVolume(v) {
       volume = Math.max(0, Math.min(1, +v || 0));
       if (master && !muted) master.gain.value = volume;
@@ -7932,6 +8616,10 @@ function v_(i) {
       if (!gameplayActive) {
         held.clear();
         draggingLook = false;
+      }
+      if (touchMode) {
+        if (!touchUi) touchUi = buildTouchUi();
+        else if (!touchUi.root.isConnected) uiRoot.appendChild(touchUi.root);
       }
       if (touchUi) touchUi.root.classList.toggle("on", gameplayActive && touchMode);
     },
@@ -8126,24 +8814,32 @@ function v_(i) {
     api.touch = true;
     api.exitLock();
     if (!touchUi) touchUi = buildTouchUi();
+    else if (!touchUi.root.isConnected) uiRoot.appendChild(touchUi.root);
     touchUi.root.classList.toggle("on", gameplayActive);
     document.documentElement.classList.add("is-touch");
     setMode("touch");
   }
 
   window.addEventListener("touchstart", () => enableTouch(), { passive: true, capture: true });
+  if (("ontouchstart" in window || navigator.maxTouchPoints > 0) && window.innerWidth <= 1024) {
+    enableTouch();
+  }
 
   dom.addEventListener("touchstart", e => {
-    if (!gameplayActive) return;
+    if (!gameplayActive || !e.changedTouches) return;
     e.preventDefault();
     for (let t of e.changedTouches) {
-      if (t.clientX < window.innerWidth * 0.45 && stickId < 0) {
+      if (t.clientX < window.innerWidth * 0.48 && stickId < 0) {
         stickId = t.identifier;
         stickStartX = t.clientX;
         stickStartY = t.clientY;
         stickX = stickY = 0;
         if (touchUi) {
-          touchUi.stick.style.transform = "translate3d(" + stickStartX + "px," + stickStartY + "px,0)";
+          touchUi.stick.style.left = stickStartX + "px";
+          touchUi.stick.style.top = stickStartY + "px";
+          touchUi.stick.style.bottom = "auto";
+          touchUi.stick.style.marginTop = "-56px";
+          touchUi.stick.style.marginBottom = "0";
           touchUi.nub.style.transform = "translate3d(0,0,0)";
           touchUi.stick.classList.add("on");
         }
@@ -8185,7 +8881,15 @@ function v_(i) {
       if (t.identifier === stickId) {
         stickId = -1;
         stickX = stickY = 0;
-        if (touchUi) touchUi.stick.classList.remove("on");
+        if (touchUi) {
+          touchUi.stick.classList.remove("on");
+          touchUi.stick.style.left = "";
+          touchUi.stick.style.top = "";
+          touchUi.stick.style.bottom = "";
+          touchUi.stick.style.marginTop = "";
+          touchUi.stick.style.marginBottom = "";
+          touchUi.nub.style.transform = "translate3d(0,0,0)";
+        }
       } else if (t.identifier === lookId) {
         lookId = -1;
       }
@@ -8619,7 +9323,7 @@ function hM(i) {
     '<div class="h-tool-row">' +
       '<button class="h-pill" id="btn-cam-mode" title="Đổi góc nhìn Thứ nhất / Thứ ba"><kbd>V</kbd><span id="lbl-cam-mode">Góc nhìn: Thứ nhất</span></button>' +
       '<button class="h-pill active" id="btn-music-mode" title="Bật / Tắt nhạc nền Piano 20/11"><kbd>M</kbd><span id="lbl-music-mode">Nhạc Piano: Bật</span></button>' +
-      '<button class="h-pill" id="btn-open-ai" title="Xem Tổng kết & Công bố công cụ AI"><kbd>I</kbd><span>Tổng kết & Công bố AI</span></button>' +
+      '<button class="h-pill" id="btn-open-ai" title="Xem Tổng kết Hành trình"><kbd>I</kbd><span>Tổng kết Hành trình</span></button>' +
       '<button class="h-pill" id="btn-open-pause" title="Mở Menu Cài đặt"><kbd>Esc</kbd><span>Menu</span></button>' +
     '</div>' +
     '<div class="h-st-bar" id="quick-st-bar">' +
@@ -8722,24 +9426,9 @@ function hM(i) {
     "WASD Di chuyển  ·  Chuột Xoay góc nhìn  ·  Shift Chạy nhanh  ·  Space Nhảy  ·  [E] Tương tác Trạm  ·  [V] Đổi góc nhìn Thứ 1 / Thứ 3  ·  [1–5] Dịch chuyển nhanh"
   );
 
-  // AI Tools & Creative Contribution Disclosure Box (Contest Requirement)
-  let aiBox = el("div", "ai-disclosure",
-    '<h4>✦ CÔNG BỐ MINH BẠCH CÔNG CỤ AI & ĐÓNG GÓP SÁNG TẠO (THEO THỂ LỆ CUỘC THI)</h4>' +
-    '<p><strong>1. Công cụ chính sử dụng:</strong></p>' +
-    '<ul>' +
-      '<li><strong>Engine Đồ họa & Âm thanh:</strong> Three.js r180 WebGL2 (Procedural 3D Geometry, Custom GLSL Shaders, PCSS Soft Shadows, Volumetric Sun Shafts, ACES Filmic Tone Mapping, GPU Procedural PBR Textures, Dynamic CanvasTexture 2D) & Web Audio API (Bộ tổng hợp nhạc nền Piano/Strings 20/11 thời gian thực).</li>' +
-      '<li><strong>Công cụ AI hỗ trợ (Coding & Ideation Assistant):</strong> Mô hình ngôn ngữ lớn (LLM / AI Coding Agent) hỗ trợ tối ưu hóa cấu trúc mã nguồn Single-File HTML, tinh chỉnh thuật toán GLSL Shader và chuẩn hóa giao diện HUD đáp ứng đa thiết bị.</li>' +
-    '</ul>' +
-    '<p><strong>2. Mô tả ngắn cách thực hiện & Đóng góp sáng tạo của tác giả/đội thi:</strong></p>' +
-    '<ul>' +
-      '<li><strong>Ý tưởng & Kịch bản Văn hóa – Giáo dục:</strong> Lên ý tưởng nghệ thuật kết nối 4 trục chủ đề <em>“Thầy cô – Mái trường – Hành trình tri thức – Tuổi trẻ và công nghệ”</em> gắn liền với bản sắc <strong>Trường Đại Học Tây Nguyên (thành lập 11/11/1977)</strong> và sắc hoa hướng dương, hoa dã quỳ tháng 11.</li>' +
-      '<li><strong>Thiết kế Không gian 3D & Tương tác Sáng tạo:</strong> Xây dựng 5 trạm tương tác 3D hoàn toàn bằng thuật toán (0% phụ thuộc file 3D hay âm thanh ngoài), cho phép người chơi đổi bài giảng phấn trắng trên Bảng Đen 3D, tương tác Hologram Công nghệ và tự viết lời chúc 20/11 khắc trực tiếp lên Đài Kỷ Niệm 3D.</li>' +
-      '<li><strong>Kiểm duyệt & Hoàn thiện (QA Loop):</strong> Trực tiếp biên tập toàn bộ nội dung lịch sử 20/11, thơ văn tri ân, kiểm thử hiệu năng WebGL2 và trải nghiệm người dùng trên trình duyệt thực tế.</li>' +
-    '</ul>'
-  );
-
-  mLeft.append(mKicker, mTitle, mSub, mLead, mStats, mButtons, aiBox, mFoot);
+  mLeft.append(mKicker, mTitle, mSub, mLead, mStats, mButtons, mFoot);
   let mPanelHost = el("div", "m-right");
+  mPanelHost.style.display = "none";
   mInner.append(mLeft, mPanelHost);
   menu.append(mBg, mInner);
 
@@ -8773,8 +9462,19 @@ function hM(i) {
     '<div class="p-note">Trên điện thoại / máy tính bảng: Chạm màn hình để bật Joystick ảo bên trái và các nút tương tác cảm ứng bên phải.</div>'
   );
 
+  // Rotate-to-landscape tip for mobile portrait users
+  let rotateTip = el("div", "rotate-tip show",
+    '<span>📱 Xoay ngang điện thoại để chơi toàn màn hình đẹp nhất</span><button type="button" aria-label="Đóng">✕</button>'
+  );
+  rotateTip.querySelector("button").addEventListener("click", () => rotateTip.classList.remove("show"));
+  function syncPortraitClass() {
+    document.documentElement.classList.toggle("is-portrait", window.innerHeight > window.innerWidth);
+  }
+  syncPortraitClass();
+  window.addEventListener("resize", syncPortraitClass);
+
   mPanelHost.append(settingsPanel, controlsPanel);
-  ui.append(hud, stModal, menu);
+  ui.append(hud, stModal, menu, rotateTip);
 
   // Build World-Space + Compass Markers for the 5 Stations
   let markerItems = [];
@@ -8832,6 +9532,7 @@ function hM(i) {
 
   let openPanel = p => {
     [settingsPanel, controlsPanel].forEach(x => x.classList.toggle("on", x === p));
+    mPanelHost.style.display = p ? "block" : "none";
     i.audio.ui();
   };
   menu.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => openPanel(null)));
@@ -9052,14 +9753,109 @@ function hM(i) {
           });
         });
       } else if (st.activityType === "chalkboard") {
+        let chalkQuizDone = !!completedArr[1];
+        const PROVERBS = [
+          { pre: "1. “Muốn sang thì bắc cầu Kiều / Muốn con hay chữ thì yêu lấy ", ans: "thầy", post: ".”" },
+          { pre: "2. “Tiên học ", ans: "lễ", post: ", hậu học văn.”" },
+          { pre: "3. “Uống nước nhớ ", ans: "nguồn", post: ", ăn quả nhớ kẻ trồng cây.”" },
+          { pre: "4. “Cơm cha, áo mẹ, ", ans: "chữ", post: " thầy / Gắng công mà học có ngày thành danh.”" }
+        ];
+
+        function updateStation2LockUI() {
+          let bClose = document.getElementById("stm-close");
+          let bNext = document.getElementById("stm-prev-next");
+          if (bNext) {
+            bNext.disabled = !chalkQuizDone;
+            bNext.style.opacity = chalkQuizDone ? "1" : "0.45";
+            bNext.style.cursor = chalkQuizDone ? "pointer" : "not-allowed";
+          }
+          if (bClose) {
+            bClose.textContent = chalkQuizDone
+              ? "Hoàn thành Trạm 2 & Tiếp tục Khám phá [Esc]"
+              : "Đóng tạm (Cần trả lời đúng 4 câu để hoàn thành Trạm 2)";
+          }
+        }
+
         intBox.innerHTML =
-          '<div class="st-int-title">✦ TƯƠNG TÁC TRẠM 2: VIẾT PHẤN TRẮNG LÊN BẢNG ĐEN 3D TRONG GIẢNG ĐƯỜNG</div>' +
+          '<div class="st-int-title">✦ TRÒ CHƠI TRẠM 2: ĐIỀN TỪ CÒN THIẾU VÀO 4 CÂU CA DAO, TỤC NGỮ</div>' +
+          '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">' +
+            PROVERBS.map((q, idx) =>
+              '<div style="padding:8px 10px;background:rgba(12,8,5,0.65);border:1px solid var(--rule);border-radius:3px;font-size:13px;line-height:1.7;color:var(--paper);">' +
+                q.pre +
+                '<input class="st-input cd-inp" data-idx="' + idx + '" type="text" maxlength="20" placeholder="..." value="' + (chalkQuizDone ? q.ans : '') + '" style="display:inline-block;width:86px;padding:2px 8px;margin:0 4px;text-align:center;font-weight:700;color:#fde047;">' +
+                q.post +
+                '<span class="cd-mark" data-mark="' + idx + '" style="margin-left:8px;font-weight:700;">' + (chalkQuizDone ? '✓' : '') + '</span>' +
+              '</div>'
+            ).join("") +
+          '</div>' +
+          '<div class="st-Preset-btns" style="margin-bottom:10px;">' +
+            '<span style="font-size:12px;color:var(--paper-dim);align-self:center;">Gợi ý từ:</span>' +
+            ['thầy', 'lễ', 'nguồn', 'chữ'].map(w =>
+              '<button class="st-preset-btn cd-chip" type="button" data-word="' + w + '">' + w + '</button>'
+            ).join("") +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">' +
+            '<button class="m-btn primary" id="cd-check" style="padding:8px 16px;font-size:13px;">✓ Kiểm tra 4 câu Ca dao, Tục ngữ</button>' +
+            '<span id="cd-msg" style="font-size:12.5px;font-weight:600;color:' + (chalkQuizDone ? '#34d399' : '#fde047') + ';">' +
+              (chalkQuizDone ? '🎉 Đã trả lời đúng cả 4 câu & hoàn thành Trạm 2!' : 'Điền đủ 4 từ còn thiếu (nhấn vào ô rồi gõ hoặc chọn từ gợi ý).') +
+            '</span>' +
+          '</div>' +
+          '<div class="st-int-title" style="margin-top:6px;">✦ ĐỔI BÀI GIẢNG PHẤN TRẮNG TRÊN BẢNG ĐEN 3D</div>' +
           '<div class="st-Preset-btns">' +
             CHALK_LESSONS.map((l, idx) =>
               '<button class="st-preset-btn' + (idx === 0 ? ' active' : '') + '" data-lesson="' + idx + '">' + l.title + '</button>'
             ).join("") +
           '</div>' +
-          '<div id="stm-lesson-status" style="font-size:13px;color:#86efac;">Đã vẽ bài giảng bằng phấn trắng lên Bảng Đen 3D phía trước Bục giảng!</div>';
+          '<div id="stm-lesson-status" style="font-size:12.5px;color:#86efac;">Đã vẽ bài giảng bằng phấn trắng lên Bảng Đen 3D phía trước Bục giảng!</div>';
+
+        let lastFocusedInp = intBox.querySelector('.cd-inp[data-idx="0"]');
+        intBox.querySelectorAll(".cd-inp").forEach(inp => {
+          inp.addEventListener("focus", () => { lastFocusedInp = inp; });
+        });
+        intBox.querySelectorAll(".cd-chip").forEach(chip => {
+          chip.addEventListener("click", () => {
+            if (lastFocusedInp) {
+              lastFocusedInp.value = chip.dataset.word;
+              i.audio.ui();
+              let nextIdx = (+lastFocusedInp.dataset.idx + 1) % PROVERBS.length;
+              let nextInp = intBox.querySelector('.cd-inp[data-idx="' + nextIdx + '"]');
+              if (nextInp) lastFocusedInp = nextInp;
+            }
+          });
+        });
+
+        document.getElementById("cd-check").addEventListener("click", () => {
+          let correctCount = 0;
+          PROVERBS.forEach((q, idx) => {
+            let inp = intBox.querySelector('.cd-inp[data-idx="' + idx + '"]');
+            let mark = intBox.querySelector('.cd-mark[data-mark="' + idx + '"]');
+            let val = (inp && inp.value || "").trim().toLowerCase();
+            let ok = val === q.ans;
+            if (ok) correctCount++;
+            if (mark) {
+              mark.textContent = ok ? "✓" : "✗";
+              mark.style.color = ok ? "#34d399" : "#fda4af";
+            }
+            if (inp) inp.style.borderColor = ok ? "#34d399" : "#f43f5e";
+          });
+          let msgEl = document.getElementById("cd-msg");
+          if (correctCount === PROVERBS.length) {
+            chalkQuizDone = true;
+            i.audio.chime("complete");
+            if (i.level && i.level.cycleChalkLesson) i.level.cycleChalkLesson();
+            if (msgEl) {
+              msgEl.style.color = "#34d399";
+              msgEl.textContent = "🎉 Xuất sắc! Bạn đã trả lời đúng 4/4 câu — Trạm 02 đã được mở khóa hoàn thành!";
+            }
+            updateStation2LockUI();
+          } else {
+            if (msgEl) {
+              msgEl.style.color = "#fda4af";
+              msgEl.textContent = "Bạn trả lời đúng " + correctCount + "/4 câu. Hãy kiểm tra lại các câu đánh dấu ✗!";
+            }
+          }
+        });
+
         intBox.querySelectorAll("[data-lesson]").forEach(b => {
           b.addEventListener("click", () => {
             let idx = +b.dataset.lesson;
@@ -9070,25 +9866,464 @@ function hM(i) {
             document.getElementById("stm-lesson-status").textContent = "Đã cập nhật trực tiếp lên Bảng Đen 3D: " + l.title;
           });
         });
+        setTimeout(updateStation2LockUI, 0);
       } else if (st.activityType === "hologram") {
-        intBox.innerHTML =
-          '<div class="st-int-title">✦ TƯƠNG TÁC TRẠM 3: ĐIỀU KHIỂN QUẢ ĐỊA CẦU HOLOGRAM 3D</div>' +
-          '<div class="st-Preset-btns">' +
-            '<button class="st-preset-btn active" data-holo="0">Chế độ 1: Trí tuệ Nhân tạo (AI) & Dữ liệu Số</button>' +
-            '<button class="st-preset-btn" data-holo="1">Chế độ 2: Công nghệ Nông Lâm – Y Dược Tây Nguyên</button>' +
-            '<button class="st-preset-btn" data-holo="2">Chế độ 3: Không gian Nghệ thuật Số WebGL 3D</button>' +
-          '</div>' +
-          '<div id="stm-holo-status" style="font-size:13px;color:#7dd3fc;">Hologram 3D tại trung tâm Pavilion đã chuyển hiệu ứng ánh sáng tương ứng!</div>';
-        intBox.querySelectorAll("[data-holo]").forEach(b => {
-          b.addEventListener("click", () => {
+        // 3-Stage Tech Puzzle Mini-Game for Station 3
+        let s1Done = !!completedArr[2], s2Done = !!completedArr[2], s3Done = !!completedArr[2];
+        let activeStage = s1Done && s2Done && s3Done ? 3 : 1;
+        let wireTimer = null;
+        let snakeTimer = null;
+        let snakeKeyHandler = null;
+
+        function cleanupTechTimers() {
+          if (wireTimer) { clearInterval(wireTimer); wireTimer = null; }
+          if (snakeTimer) { clearInterval(snakeTimer); snakeTimer = null; }
+          if (snakeKeyHandler) { window.removeEventListener("keydown", snakeKeyHandler); snakeKeyHandler = null; }
+        }
+        stModal._cleanupTech = cleanupTechTimers;
+
+        function updateStation3LockUI() {
+          let allDone = s1Done && s2Done && s3Done;
+          let bClose = document.getElementById("stm-close");
+          let bNext = document.getElementById("stm-prev-next");
+          if (bNext) {
+            bNext.disabled = !allDone;
+            bNext.style.opacity = allDone ? "1" : "0.45";
+            bNext.style.cursor = allDone ? "pointer" : "not-allowed";
+          }
+          if (bClose) {
+            bClose.textContent = allDone
+              ? "Hoàn thành Trạm 3 & Tiếp tục Khám phá [Esc]"
+              : "Đóng tạm (Cần xong 3 màn để hoàn thành Trạm 3)";
+          }
+          if (allDone && i.level && i.level.cycleHoloMode) {
             i.level.cycleHoloMode();
-            i.audio.chime("station");
-            intBox.querySelectorAll("[data-holo]").forEach(x => x.classList.remove("active"));
-            b.classList.add("active");
-            document.getElementById("stm-holo-status").textContent = "Đã kích hoạt hiệu ứng Hologram 3D: " + b.textContent;
+          }
+        }
+
+        function renderTechPuzzle() {
+          cleanupTechTimers();
+          let allDone = s1Done && s2Done && s3Done;
+          intBox.innerHTML =
+            '<div class="st-int-title">✦ THỬ THÁCH TRẠM 3: GIẢI ĐỐ CÔNG NGHỆ (HOÀN THÀNH 3 MÀN ĐỂ QUA TRẠM)</div>' +
+            '<div class="st-Preset-btns" id="tp-tabs">' +
+              '<button class="st-preset-btn' + (activeStage === 1 ? ' active' : '') + '" data-tp="1">' + (s1Done ? '✓ ' : '') + 'Màn 1: Nối Dây Điện</button>' +
+              '<button class="st-preset-btn' + (activeStage === 2 ? ' active' : '') + '" data-tp="2" ' + (!s1Done ? 'disabled style="opacity:0.45;cursor:not-allowed;"' : '') + '>' + (s2Done ? '✓ ' : '🔒 ') + 'Màn 2: Con Rắn (100đ)</button>' +
+              '<button class="st-preset-btn' + (activeStage === 3 ? ' active' : '') + '" data-tp="3" ' + (!s2Done ? 'disabled style="opacity:0.45;cursor:not-allowed;"' : '') + '>' + (s3Done ? '✓ ' : '🔒 ') + 'Màn 3: Code Python</button>' +
+            '</div>' +
+            '<div id="tp-stage-body" style="padding:12px;background:rgba(10,7,4,0.65);border:1px solid var(--rule);border-radius:4px;"></div>' +
+            '<div id="tp-overall" style="margin-top:10px;font-size:12.5px;color:' + (allDone ? '#34d399' : '#fde047') + ';font-weight:600;">' +
+              (allDone ? '🎉 Xuất sắc! Bạn đã hoàn thành cả 3 màn chơi — Trạm 03 đã được mở khóa hoàn thành!' : 'Tiến độ giải đố: ' + ([s1Done, s2Done, s3Done].filter(Boolean).length) + '/3 màn hoàn thành.') +
+            '</div>';
+
+          intBox.querySelectorAll("[data-tp]").forEach(btn => {
+            btn.addEventListener("click", () => {
+              let stg = +btn.dataset.tp;
+              if (stg === 2 && !s1Done) return;
+              if (stg === 3 && !s2Done) return;
+              activeStage = stg;
+              i.audio.ui();
+              renderTechPuzzle();
+            });
           });
+
+          let body = document.getElementById("tp-stage-body");
+          if (activeStage === 1) renderStage1Wires(body);
+          else if (activeStage === 2) renderStage2Snake(body);
+          else renderStage3Python(body);
+          updateStation3LockUI();
+        }
+
+        // --- MÀN 1: NỐI 4 ĐẦU DÂY ĐIỆN ĐÚNG MÀU & GIỮ ĐỦ 4 GIÂY ---
+        function renderStage1Wires(container) {
+          const WIRES = [
+            { id: "red",   label: "ĐỎ",   hex: "#f43f5e" },
+            { id: "blue",  label: "XANH DƯƠNG", hex: "#38bdf8" },
+            { id: "yellow",label: "VÀNG", hex: "#facc15" },
+            { id: "green", label: "XANH LÁ", hex: "#34d399" }
+          ];
+          const RIGHT_ORDER = [WIRES[2], WIRES[0], WIRES[3], WIRES[1]]; // Shuffled
+          let selectedLeft = null;
+          let links = {}; // leftId -> rightId
+          let holdSec = 0;
+
+          container.innerHTML =
+            '<div style="font-size:13px;color:var(--paper-mid);margin-bottom:10px;">Chọn đầu dây bên trái rồi bấm vào đầu dây <strong>cùng màu</strong> bên phải. Khi nối đủ 4 dây đúng màu, giữ mạch ổn định đủ <strong>4 giây</strong>!</div>' +
+            '<div style="position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:460px;margin:0 auto;padding:8px 0;">' +
+              '<canvas id="wire-cv" width="460" height="190" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></canvas>' +
+              '<div id="wire-left" style="display:flex;flex-direction:column;gap:12px;z-index:2;">' +
+                WIRES.map((w, idx) =>
+                  '<button class="st-preset-btn wire-node-l" data-wid="' + w.id + '" style="min-width:118px;border-color:' + w.hex + ';background:rgba(18,12,8,0.9);color:' + w.hex + ';font-weight:700;">● ' + w.label + '</button>'
+                ).join("") +
+              '</div>' +
+              '<div id="wire-right" style="display:flex;flex-direction:column;gap:12px;z-index:2;">' +
+                RIGHT_ORDER.map((w, idx) =>
+                  '<button class="st-preset-btn wire-node-r" data-wid="' + w.id + '" style="min-width:118px;border-color:' + w.hex + ';background:rgba(18,12,8,0.9);color:' + w.hex + ';font-weight:700;">' + w.label + ' ●</button>'
+                ).join("") +
+              '</div>' +
+            '</div>' +
+            '<div style="margin-top:10px;">' +
+              '<div style="height:8px;background:rgba(255,248,236,0.12);border-radius:4px;overflow:hidden;"><div id="wire-bar" style="height:100%;width:' + (s1Done ? '100%' : '0%') + ';background:linear-gradient(90deg,#f59e0b,#34d399);transition:width 0.1s linear;"></div></div>' +
+              '<div id="wire-msg" style="margin-top:6px;font-size:12.5px;color:' + (s1Done ? '#34d399' : '#ffe299') + ';font-weight:600;">' +
+                (s1Done ? '✓ Đã hoàn thành Màn 1! Hãy chuyển sang Màn 2.' : 'Hãy nối đúng màu 4 cặp dây điện (0/4).') +
+              '</div>' +
+            '</div>';
+
+          if (s1Done) {
+            WIRES.forEach(w => { links[w.id] = w.id; });
+          }
+
+          function drawWires() {
+            let cv = document.getElementById("wire-cv");
+            if (!cv) return;
+            let ctx = cv.getContext("2d");
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            let rect = cv.getBoundingClientRect();
+            if (!rect.width) return;
+            Object.keys(links).forEach(lid => {
+              let rid = links[lid];
+              let lBtn = container.querySelector('.wire-node-l[data-wid="' + lid + '"]');
+              let rBtn = container.querySelector('.wire-node-r[data-wid="' + rid + '"]');
+              if (!lBtn || !rBtn) return;
+              let lb = lBtn.getBoundingClientRect(), rb = rBtn.getBoundingClientRect();
+              let x1 = ((lb.right - rect.left) / rect.width) * cv.width;
+              let y1 = ((lb.top + lb.height / 2 - rect.top) / rect.height) * cv.height;
+              let x2 = ((rb.left - rect.left) / rect.width) * cv.width;
+              let y2 = ((rb.top + rb.height / 2 - rect.top) / rect.height) * cv.height;
+              let wObj = WIRES.find(x => x.id === lid);
+              ctx.strokeStyle = wObj ? wObj.hex : "#ffb84d";
+              ctx.lineWidth = 6;
+              ctx.lineCap = "round";
+              ctx.beginPath();
+              ctx.moveTo(x1, y1);
+              ctx.bezierCurveTo((x1 + x2) / 2, y1, (x1 + x2) / 2, y2, x2, y2);
+              ctx.stroke();
+            });
+          }
+          setTimeout(drawWires, 30);
+
+          function checkAllMatched() {
+            let matched = WIRES.filter(w => links[w.id] === w.id).length;
+            let msg = document.getElementById("wire-msg");
+            if (matched < 4) {
+              if (wireTimer) { clearInterval(wireTimer); wireTimer = null; }
+              holdSec = 0;
+              let bar = document.getElementById("wire-bar");
+              if (bar) bar.style.width = "0%";
+              if (msg) msg.textContent = "Đã nối đúng " + matched + "/4 dây điện. Hãy nối đủ 4 dây cùng màu!";
+              return;
+            }
+            if (s1Done || wireTimer) return;
+            holdSec = 0;
+            if (msg) msg.textContent = "⚡ Mạch điện đã thông! Đang giữ ổn định: 0.0 / 4.0 giây...";
+            wireTimer = setInterval(() => {
+              holdSec += 0.1;
+              let pct = Math.min(100, (holdSec / 4.0) * 100);
+              let bar = document.getElementById("wire-bar");
+              let mEl = document.getElementById("wire-msg");
+              if (bar) bar.style.width = pct.toFixed(1) + "%";
+              if (mEl) mEl.textContent = "⚡ Đang giữ mạch ổn định: " + Math.min(4, holdSec).toFixed(1) + " / 4.0 giây...";
+              if (holdSec >= 4.0) {
+                clearInterval(wireTimer);
+                wireTimer = null;
+                s1Done = true;
+                i.audio.chime("station");
+                if (mEl) {
+                  mEl.style.color = "#34d399";
+                  mEl.textContent = "✓ Hoàn thành Màn 1 (đủ 4 giây)! Đang mở khóa Màn 2...";
+                }
+                setTimeout(() => {
+                  activeStage = 2;
+                  renderTechPuzzle();
+                }, 650);
+              }
+            }, 100);
+          }
+
+          container.querySelectorAll(".wire-node-l").forEach(b => {
+            b.addEventListener("click", () => {
+              if (s1Done) return;
+              selectedLeft = b.dataset.wid;
+              container.querySelectorAll(".wire-node-l").forEach(x => {
+                x.style.boxShadow = x === b ? "0 0 12px " + x.style.borderColor : "none";
+              });
+              i.audio.ui();
+            });
+          });
+
+          container.querySelectorAll(".wire-node-r").forEach(b => {
+            b.addEventListener("click", () => {
+              if (s1Done || !selectedLeft) return;
+              let rid = b.dataset.wid;
+              if (selectedLeft !== rid) {
+                let mEl = document.getElementById("wire-msg");
+                if (mEl) {
+                  mEl.style.color = "#fda4af";
+                  mEl.textContent = "✗ Sai màu dây rồi! Hãy nối đúng 2 đầu cùng màu với nhau.";
+                }
+                return;
+              }
+              links[selectedLeft] = rid;
+              selectedLeft = null;
+              container.querySelectorAll(".wire-node-l").forEach(x => { x.style.boxShadow = "none"; });
+              i.audio.ui();
+              drawWires();
+              checkAllMatched();
+            });
+          });
+        }
+
+        // --- MÀN 2: CON RẮN SĂN MỒI (ĐẠT 100 ĐIỂM ĐỂ QUA MÀN) ---
+        function renderStage2Snake(container) {
+          const GRID = 15, CELL = 18;
+          let snake = [{ x: 7, y: 7 }, { x: 6, y: 7 }, { x: 5, y: 7 }];
+          let dir = { x: 1, y: 0 }, nextDir = { x: 1, y: 0 };
+          let food = { x: 11, y: 7 };
+          let score = s2Done ? 100 : 0;
+          let gameOver = false;
+
+          container.innerHTML =
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">' +
+              '<span style="font-size:13px;color:var(--paper-mid);">Điều khiển bằng <strong>Phím Mũi Tên / WASD</strong> hoặc nút bên dưới. Đạt <strong>100 điểm</strong> để qua Màn 2!</span>' +
+              '<span id="snk-score" style="font:800 15px/1 var(--f-mono);color:#fde047;">ĐIỂM: ' + score + ' / 100</span>' +
+            '</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center;">' +
+              '<canvas id="snk-cv" width="' + (GRID * CELL) + '" height="' + (GRID * CELL) + '" style="background:#0c1410;border:2px solid #34d399;border-radius:4px;"></canvas>' +
+              '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">' +
+                '<button class="st-preset-btn snk-dir" data-d="up" style="width:48px;height:42px;">▲</button>' +
+                '<div style="display:flex;gap:6px;">' +
+                  '<button class="st-preset-btn snk-dir" data-d="left" style="width:48px;height:42px;">◀</button>' +
+                  '<button class="st-preset-btn snk-dir" data-d="down" style="width:48px;height:42px;">▼</button>' +
+                  '<button class="st-preset-btn snk-dir" data-d="right" style="width:48px;height:42px;">▶</button>' +
+                '</div>' +
+                '<button class="m-btn primary" id="snk-restart" style="margin-top:8px;padding:7px 14px;font-size:12px;">↻ Chơi lại Màn 2</button>' +
+              '</div>' +
+            '</div>' +
+            '<div id="snk-msg" style="margin-top:8px;font-size:12.5px;color:' + (s2Done ? '#34d399' : '#7dd3fc') + ';font-weight:600;text-align:center;">' +
+              (s2Done ? '✓ Đã đạt 100 điểm & hoàn thành Màn 2!' : 'Mỗi quả táo vàng = +10 điểm. Hãy ăn đủ 10 quả!') +
+            '</div>';
+
+          function placeFood() {
+            while (true) {
+              let fx = Math.floor(Math.random() * GRID);
+              let fy = Math.floor(Math.random() * GRID);
+              if (!snake.some(s => s.x === fx && s.y === fy)) {
+                food = { x: fx, y: fy };
+                break;
+              }
+            }
+          }
+
+          function drawSnake() {
+            let cv = document.getElementById("snk-cv");
+            if (!cv) return;
+            let ctx = cv.getContext("2d");
+            ctx.fillStyle = "#0c1410";
+            ctx.fillRect(0, 0, cv.width, cv.height);
+
+            // Subtle grid
+            ctx.strokeStyle = "rgba(52,211,153,0.08)";
+            ctx.lineWidth = 1;
+            for (let k = 0; k <= GRID; k++) {
+              ctx.beginPath(); ctx.moveTo(k * CELL, 0); ctx.lineTo(k * CELL, cv.height); ctx.stroke();
+              ctx.beginPath(); ctx.moveTo(0, k * CELL); ctx.lineTo(cv.width, k * CELL); ctx.stroke();
+            }
+
+            // Food
+            ctx.fillStyle = "#ffb84d";
+            ctx.beginPath();
+            ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL * 0.38, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Snake
+            snake.forEach((seg, idx) => {
+              ctx.fillStyle = idx === 0 ? "#6ee7b7" : "#10b981";
+              ctx.fillRect(seg.x * CELL + 1.5, seg.y * CELL + 1.5, CELL - 3, CELL - 3);
+            });
+          }
+
+          function setDir(nx, ny) {
+            if (dir.x === -nx && dir.y === -ny) return;
+            nextDir = { x: nx, y: ny };
+          }
+
+          function resetSnake() {
+            snake = [{ x: 7, y: 7 }, { x: 6, y: 7 }, { x: 5, y: 7 }];
+            dir = { x: 1, y: 0 };
+            nextDir = { x: 1, y: 0 };
+            score = 0;
+            gameOver = false;
+            placeFood();
+            let scEl = document.getElementById("snk-score");
+            let mEl = document.getElementById("snk-msg");
+            if (scEl) scEl.textContent = "ĐIỂM: 0 / 100";
+            if (mEl) { mEl.style.color = "#7dd3fc"; mEl.textContent = "Mỗi quả táo vàng = +10 điểm. Hãy ăn đủ 10 quả!"; }
+            drawSnake();
+          }
+
+          snakeKeyHandler = e => {
+            if (activeStage !== 2 || s2Done || gameOver) return;
+            if (e.code === "ArrowUp" || e.code === "KeyW") { e.preventDefault(); setDir(0, -1); }
+            else if (e.code === "ArrowDown" || e.code === "KeyS") { e.preventDefault(); setDir(0, 1); }
+            else if (e.code === "ArrowLeft" || e.code === "KeyA") { e.preventDefault(); setDir(-1, 0); }
+            else if (e.code === "ArrowRight" || e.code === "KeyD") { e.preventDefault(); setDir(1, 0); }
+          };
+          window.addEventListener("keydown", snakeKeyHandler);
+
+          container.querySelectorAll(".snk-dir").forEach(b => {
+            b.addEventListener("click", () => {
+              let d = b.dataset.d;
+              if (d === "up") setDir(0, -1);
+              else if (d === "down") setDir(0, 1);
+              else if (d === "left") setDir(-1, 0);
+              else if (d === "right") setDir(1, 0);
+            });
+          });
+          document.getElementById("snk-restart").addEventListener("click", resetSnake);
+
+          drawSnake();
+          if (!s2Done) {
+            snakeTimer = setInterval(() => {
+              if (gameOver || s2Done) return;
+              dir = nextDir;
+              let head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+              if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID || snake.some(s => s.x === head.x && s.y === head.y)) {
+                gameOver = true;
+                let mEl = document.getElementById("snk-msg");
+                if (mEl) {
+                  mEl.style.color = "#fda4af";
+                  mEl.textContent = "✗ Chưa đạt 100 điểm! Bấm “↻ Chơi lại Màn 2” để thử lại.";
+                }
+                return;
+              }
+              snake.unshift(head);
+              if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                i.audio.ui();
+                let scEl = document.getElementById("snk-score");
+                if (scEl) scEl.textContent = "ĐIỂM: " + score + " / 100";
+                if (score >= 100) {
+                  s2Done = true;
+                  clearInterval(snakeTimer);
+                  snakeTimer = null;
+                  i.audio.chime("station");
+                  let mEl = document.getElementById("snk-msg");
+                  if (mEl) {
+                    mEl.style.color = "#34d399";
+                    mEl.textContent = "🎉 Đạt 100 điểm! Hoàn thành Màn 2 — Đang mở khóa Màn 3...";
+                  }
+                  setTimeout(() => {
+                    activeStage = 3;
+                    renderTechPuzzle();
+                  }, 700);
+                  drawSnake();
+                  return;
+                }
+                placeFood();
+              } else {
+                snake.pop();
+              }
+              drawSnake();
+            }, 165);
+          }
+        }
+
+        // --- MÀN 3: ĐIỀN TỪ ĐOẠN CODE PYTHON ---
+        function renderStage3Python(container) {
+          container.innerHTML =
+            '<div style="font-size:13px;color:var(--paper-mid);margin-bottom:10px;">Điền từ còn thiếu vào đoạn code <strong>Python</strong> bên dưới để in ra dòng chữ: <strong style="color:#fde047;">"Chúc Mừng Ngày Nhà Giáo Việt Nam 20/11"</strong></div>' +
+            '<pre style="margin:0 0 12px;padding:12px 14px;background:#0a0f14;border:1px solid #38bdf8;border-radius:4px;font:500 13px/1.8 var(--f-mono);color:#e2e8f0;overflow-x:auto;">' +
+              '<span style="color:#64748b;"># Chương trình Python Tri ân 20/11</span>\n' +
+              '<input id="py-b1" type="text" placeholder="hàm in" value="' + (s3Done ? 'print' : '') + '" style="width:78px;padding:2px 6px;background:#1e293b;border:1px solid #38bdf8;color:#fde047;font:600 13px var(--f-mono);border-radius:3px;">' +
+              '(<span style="color:#86efac;">"Chúc Mừng Ngày Nhà Giáo Việt Nam ' +
+              '<input id="py-b2" type="text" placeholder="ngày" value="' + (s3Done ? '20/11' : '') + '" style="width:68px;padding:2px 6px;background:#1e293b;border:1px solid #38bdf8;color:#fde047;font:600 13px var(--f-mono);border-radius:3px;">' +
+              '"</span>)' +
+            '</pre>' +
+            '<div class="st-Preset-btns" style="margin-bottom:10px;">' +
+              '<span style="font-size:12px;color:var(--paper-dim);align-self:center;">Gợi ý:</span>' +
+              '<button class="st-preset-btn py-hint" data-t="print" data-target="py-b1">print</button>' +
+              '<button class="st-preset-btn py-hint" data-t="input" data-target="py-b1">input</button>' +
+              '<button class="st-preset-btn py-hint" data-t="20/11" data-target="py-b2">20/11</button>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">' +
+              '<button class="m-btn primary" id="py-run" style="padding:8px 16px;font-size:13px;">▶ Chạy Code Python</button>' +
+              '<span id="py-out" style="font:500 12.5px/1.4 var(--f-mono);color:' + (s3Done ? '#34d399' : '#7dd3fc') + ';">' +
+                (s3Done ? '>>> Chúc Mừng Ngày Nhà Giáo Việt Nam 20/11 (✓ Hoàn thành!)' : '') +
+              '</span>' +
+            '</div>';
+
+          container.querySelectorAll(".py-hint").forEach(b => {
+            b.addEventListener("click", () => {
+              let inp = document.getElementById(b.dataset.target);
+              if (inp) inp.value = b.dataset.t;
+              i.audio.ui();
+            });
+          });
+
+          document.getElementById("py-run").addEventListener("click", () => {
+            let v1 = (document.getElementById("py-b1").value || "").trim().toLowerCase();
+            let v2 = (document.getElementById("py-b2").value || "").trim();
+            let out = document.getElementById("py-out");
+            if (v1 === "print" && v2 === "20/11") {
+              s3Done = true;
+              i.audio.chime("complete");
+              out.style.color = "#34d399";
+              out.textContent = '>>> Chúc Mừng Ngày Nhà Giáo Việt Nam 20/11  (✓ Chính xác!)';
+              renderTechPuzzle();
+            } else {
+              out.style.color = "#fda4af";
+              out.textContent = "✗ Sai cú pháp Python! Gợi ý: dùng hàm print và ngày 20/11.";
+            }
+          });
+        }
+
+        renderTechPuzzle();
+      } else if (st.activityType === "checkin") {
+        let savedName = localStorage.getItem("tnu_checkin_name") || "";
+        intBox.innerHTML =
+          '<div class="st-int-title">✦ KHU VỰC CHECK-IN 20/11 — CHỈ CẦN ĐIỀN TÊN ĐỂ HOÀN THÀNH NHIỆM VỤ</div>' +
+          '<div class="st-wish-form">' +
+            '<input class="st-input" id="checkin-name-inp" type="text" maxlength="80" placeholder="Nhập tên của bạn (VD: Nguyễn Văn A - K24)..." value="' + savedName.replace(/"/g, "&quot;") + '">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">' +
+              '<button class="m-btn primary" id="btn-checkin-submit" style="padding:9px 18px;font-size:13px;">🌻 Check-in & Hoàn thành Trạm 4</button>' +
+              '<span id="checkin-msg" style="font-size:12.5px;color:#6ee7b7;">Điền tên của bạn để thắp sáng 12/12 đóa hoa tri ân!</span>' +
+            '</div>' +
+          '</div>';
+
+        function performCheckin(advanceNext) {
+          let nameInp = document.getElementById("checkin-name-inp");
+          let msgEl = document.getElementById("checkin-msg");
+          let nameVal = (nameInp && nameInp.value || "").trim();
+          if (!nameVal) {
+            if (msgEl) {
+              msgEl.style.color = "#fda4af";
+              msgEl.textContent = "Vui lòng điền tên của bạn để Check-in hoàn thành Trạm 4!";
+            }
+            if (nameInp) nameInp.focus();
+            return false;
+          }
+          try { localStorage.setItem("tnu_checkin_name", nameVal); } catch {}
+          i.level.lightUpGardenFlowers(12);
+          if (i.level.spawnCheckinFirefly) i.level.spawnCheckinFirefly(nameVal, true);
+          i.audio.chime("wish");
+          if (msgEl) {
+            msgEl.style.color = "#6ee7b7";
+            msgEl.textContent = "✓ Check-in thành công! Đom đóm “" + nameVal + "” đã bay lên trên Vườn Hoa.";
+          }
+          if (advanceNext !== undefined) {
+            stModal.classList.remove("on");
+            onCompleteStation(st.index, !!advanceNext);
+            if (advanceNext && onNextStation) onNextStation((st.index + 1) % STATIONS_DATA.length);
+          }
+          return true;
+        }
+
+        intBox.querySelector("#btn-checkin-submit").addEventListener("click", () => {
+          performCheckin(false);
         });
+        stModal._performCheckin = performCheckin;
       } else if (st.activityType === "wish" || st.activityType === "monument") {
+        stModal._performCheckin = null;
         let curW = i.level.getCurrentWish();
         intBox.innerHTML =
           '<div class="st-int-title">✦ TƯƠNG TÁC SÁNG TẠO: THẮP SÁNG HOA TRI ÂN & KHẮC LỜI CHÚC 20/11 LÊN ĐÀI KỶ NIỆM 3D</div>' +
@@ -9137,10 +10372,27 @@ function hM(i) {
       let btnNext = document.getElementById("stm-prev-next");
       let nextIdx = (st.index + 1) % STATIONS_DATA.length;
       btnNext.textContent = st.index === 4
-        ? "Mở Màn hình Tổng kết & Công bố AI ★"
+        ? "Mở Màn hình Tổng kết ★"
         : "Đi tới " + STATIONS_DATA[nextIdx].code + ": " + STATIONS_DATA[nextIdx].short + " →";
 
+      if (st.activityType !== "hologram" && st.activityType !== "chalkboard") {
+        btnNext.disabled = false;
+        btnNext.style.opacity = "1";
+        btnNext.style.cursor = "pointer";
+        btnClose.textContent = "Hoàn thành Trạm & Tiếp tục Khám phá [Esc]";
+      }
+
       btnClose.onclick = () => {
+        if (stModal._cleanupTech) { stModal._cleanupTech(); stModal._cleanupTech = null; }
+        if ((st.activityType === "hologram" || st.activityType === "chalkboard") && btnNext.disabled) {
+          stModal.classList.remove("on");
+          i.input.setGameplay(true);
+          return;
+        }
+        if (st.activityType === "checkin" && stModal._performCheckin) {
+          stModal._performCheckin(false);
+          return;
+        }
         // Save wish if on wish/monument modal
         let aInp = document.getElementById("wish-author-inp");
         let tInp = document.getElementById("wish-text-inp");
@@ -9152,6 +10404,12 @@ function hM(i) {
       };
 
       btnNext.onclick = () => {
+        if (btnNext.disabled) return;
+        if (stModal._cleanupTech) { stModal._cleanupTech(); stModal._cleanupTech = null; }
+        if (st.activityType === "checkin" && stModal._performCheckin) {
+          stModal._performCheckin(true);
+          return;
+        }
         let aInp = document.getElementById("wish-author-inp");
         let tInp = document.getElementById("wish-text-inp");
         if (aInp && tInp) {
@@ -9166,7 +10424,103 @@ function hM(i) {
         }
       };
     },
+    openCommunityBoardModal(onClose) {
+      if (stModal._cleanupTech) { stModal._cleanupTech(); stModal._cleanupTech = null; }
+      stModal.classList.add("on");
+      i.input.exitLock();
+      i.input.setGameplay(false);
+
+      document.getElementById("stm-kicker").textContent = "GÓC TRI ÂN CỘNG ĐỒNG • TRƯỜNG ĐẠI HỌC TÂY NGUYÊN";
+      document.getElementById("stm-pill").textContent = "LƯU BÚT 20/11";
+      document.getElementById("stm-title").textContent = "Bảng Vàng Lưu Bút Gửi Thầy Cô 20/11";
+      document.getElementById("stm-sub").textContent = "Danh sách những lời chúc tri ân đã được gửi và lưu giữ tại sân trường";
+      document.getElementById("stm-poem").innerHTML = "“Mỗi lời chúc là một bông hoa đẹp gửi tặng Thầy Cô nhân Ngày Nhà giáo Việt Nam 20/11.”";
+      document.getElementById("stm-body").innerHTML = "";
+      document.getElementById("stm-hl").innerHTML = "";
+
+      let intBox = document.getElementById("stm-interactive");
+      function renderList() {
+        let list = i.level.getWishesList ? i.level.getWishesList() : [];
+        let listHtml = list.map((w, idx) =>
+          '<div style="padding:10px 12px;margin-bottom:8px;background:rgba(255,248,236,0.05);border:1px solid rgba(255,196,107,0.28);border-left:3px solid ' + (idx === 0 ? '#ffb84d' : '#34d399') + ';border-radius:3px;">' +
+            '<div style="display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#fde047;font-weight:700;margin-bottom:4px;">' +
+              '<span>✦ ' + (w.author || "Sinh viên ĐH Tây Nguyên").replace(/</g, "&lt;") + '</span>' +
+              '<span style="color:var(--paper-dim);font-weight:500;">' + (w.time || "20/11") + '</span>' +
+            '</div>' +
+            '<div style="font-size:13.5px;color:var(--paper);line-height:1.5;font-style:italic;">“' + (w.text || "").replace(/</g, "&lt;") + '”</div>' +
+          '</div>'
+        ).join("");
+        let container = document.getElementById("cb-wishes-list");
+        if (container) container.innerHTML = listHtml || '<div style="color:var(--paper-dim);">Chưa có lời chúc nào.</div>';
+      }
+
+      intBox.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">' +
+          '<div class="st-int-title" style="margin:0;">✦ DANH SÁCH LỜI CHÚC ĐÃ LƯU</div>' +
+          '<button class="st-preset-btn" id="cb-sync-btn">↻ Đồng bộ từ Google Drive</button>' +
+        '</div>' +
+        '<div id="cb-wishes-list" style="max-height:240px;overflow-y:auto;padding-right:4px;margin-bottom:14px;"></div>' +
+        '<div class="st-int-title">✦ GỬI LỜI CHÚC MỚI LÊN BẢNG VÀNG 3D</div>' +
+        '<div class="st-wish-form">' +
+          '<input class="st-input" id="cb-author-inp" type="text" maxlength="80" placeholder="Tên của bạn / Lớp, Khoa...">' +
+          '<textarea class="st-textarea" id="cb-text-inp" rows="2" maxlength="280" placeholder="Viết lời chúc 20/11 gửi tới Thầy Cô..."></textarea>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">' +
+            '<button class="m-btn primary" id="cb-send-btn" style="padding:8px 16px;font-size:13px;">✨ Gửi & Lưu Lời Chúc</button>' +
+            '<span id="cb-status" style="font-size:12px;color:#6ee7b7;"></span>' +
+          '</div>' +
+        '</div>';
+
+      renderList();
+
+      intBox.querySelector("#cb-sync-btn").addEventListener("click", async () => {
+        let stEl = document.getElementById("cb-status");
+        stEl.textContent = "Đang đồng bộ từ Google Drive...";
+        let res = await i.level.fetchWishesFromSheets();
+        renderList();
+        stEl.textContent = res.ok
+          ? "✓ Đã đồng bộ " + res.list.length + " lời chúc từ Google Drive!"
+          : (res.reason === "no_url" ? "Đang dùng dữ liệu lưu cục bộ (chưa gắn link Google Apps Script)." : "Không thể kết nối Google Drive: " + res.reason);
+      });
+
+      intBox.querySelector("#cb-send-btn").addEventListener("click", () => {
+        let aVal = document.getElementById("cb-author-inp").value.trim();
+        let tVal = document.getElementById("cb-text-inp").value.trim();
+        let stEl = document.getElementById("cb-status");
+        if (!tVal) {
+          stEl.style.color = "#fda4af";
+          stEl.textContent = "Vui lòng nhập nội dung lời chúc trước khi gửi!";
+          return;
+        }
+        i.level.updateMonumentWish(tVal, aVal || "Sinh viên ĐH Tây Nguyên", 12, true);
+        i.audio.chime("wish");
+        document.getElementById("cb-text-inp").value = "";
+        renderList();
+        stEl.style.color = "#6ee7b7";
+        stEl.textContent = "✓ Đã lưu lời chúc lên Bảng Vàng 3D & đồng bộ!";
+      });
+
+      let btnClose = document.getElementById("stm-close");
+      let btnNext = document.getElementById("stm-prev-next");
+      btnNext.style.display = "none";
+      btnClose.textContent = "Đóng Bảng Vàng & Tiếp tục Khám phá [Esc]";
+      btnClose.onclick = () => {
+        btnNext.style.display = "";
+        btnClose.textContent = "Hoàn thành Trạm & Tiếp tục Khám phá [Esc]";
+        stModal.classList.remove("on");
+        if (onClose) onClose();
+      };
+    },
     closeStationModal() {
+      if (stModal._cleanupTech) { stModal._cleanupTech(); stModal._cleanupTech = null; }
+      let btnNext = document.getElementById("stm-prev-next");
+      let btnClose = document.getElementById("stm-close");
+      if (btnNext) {
+        btnNext.style.display = "";
+        btnNext.disabled = false;
+        btnNext.style.opacity = "1";
+        btnNext.style.cursor = "pointer";
+      }
+      if (btnClose) btnClose.textContent = "Hoàn thành Trạm & Tiếp tục Khám phá [Esc]";
       stModal.classList.remove("on");
     },
     isModalOpen() {
@@ -9276,6 +10630,7 @@ function mM(i) {
   let playTime = 0;
   let titleTime = 0;
   let nearStationIdx = -1;
+  let nearCommunityBoard = false;
   let autoPromptedStation = -1;
 
   function countDone() {
@@ -9320,9 +10675,12 @@ function mM(i) {
     i.input.setGameplay(true);
 
     if (!wasDone && countDone() === 5) {
+      if (i.level && i.level.setFireworks) {
+        i.level.setFireworks(true);
+      }
       setTimeout(() => {
-        i.hud.banner("HOÀN THÀNH 5/5 TRẠM TRI ÂN", "NGỌN ĐUỐC TRI THỨC ĐẠI HỌC TÂY NGUYÊN TỎA SÁNG", 4.0);
-      }, 600);
+        i.hud.banner("HOÀN THÀNH 5/5 TRẠM TRI ÂN", "NGỌN ĐUỐC TRI THỨC TỎA SÁNG & PHÁO HOA CHÀO MỪNG 20/11", 4.5);
+      }, 400);
     }
   }
 
@@ -9356,8 +10714,33 @@ function mM(i) {
     );
   }
 
+  function openCommunityBoard() {
+    i.audio.start();
+    i.audio.ui();
+    i.hud.openCommunityBoardModal(() => {
+      state = "playing";
+      i.input.setGameplay(true);
+    });
+  }
+
   function startGame(opts = {}) {
     i.audio.start();
+    // On mobile touch devices, request fullscreen & landscape orientation automatically
+    if (i.input && i.input.touch) {
+      try {
+        let docEl = document.documentElement;
+        let fs = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
+        if (fs && !document.fullscreenElement) {
+          Promise.resolve(fs.call(docEl)).then(() => {
+            if (screen.orientation && screen.orientation.lock) {
+              screen.orientation.lock("landscape").catch(() => {});
+            }
+          }).catch(() => {});
+        } else if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("landscape").catch(() => {});
+        }
+      } catch {}
+    }
     state = "playing";
     i.hud.hideMenu();
     i.hud.setHudVisible(true);
@@ -9398,11 +10781,13 @@ function mM(i) {
       onResume: () => {
         state = "playing";
         i.hud.hideMenu();
+        i.hud.setHudVisible(true);
         i.input.setGameplay(true);
       },
       onRestart: () => {
         completed = [false, false, false, false, false];
         for (let k = 0; k < 5; k++) i.level.setStationCompleted(k, false);
+        if (i.level && i.level.setFireworks) i.level.setFireworks(false);
         playTime = 0;
         startGame();
       }
@@ -9432,6 +10817,7 @@ function mM(i) {
       onRestart: () => {
         completed = [false, false, false, false, false];
         for (let k = 0; k < 5; k++) i.level.setStationCompleted(k, false);
+        if (i.level && i.level.setFireworks) i.level.setFireworks(false);
         playTime = 0;
         startGame();
       }
@@ -9454,6 +10840,7 @@ function mM(i) {
     teleportToStation,
     interactCurrentStation() {
       if (nearStationIdx >= 0) interactStation(nearStationIdx);
+      else if (nearCommunityBoard) openCommunityBoard();
     },
     completeStation,
     update(dt) {
@@ -9532,6 +10919,7 @@ function mM(i) {
       }
 
       if (nearStationIdx >= 0) {
+        nearCommunityBoard = false;
         let st = STATIONS_DATA[nearStationIdx];
         let proximityProgress = Fo(1 - (bestDist - 1.8) / 4.4);
         i.hud.setPrompt(st.code + ": " + st.prompt + " [Nhấn E]", Math.max(0.25, proximityProgress), "E");
@@ -9543,7 +10931,19 @@ function mM(i) {
           interactStation(nearStationIdx);
         }
       } else {
-        i.hud.setPrompt(null);
+        let cbPos = i.level && i.level.communityBoardPos;
+        let cbDist = cbPos ? Math.hypot(i.player.pos.x - cbPos.x, i.player.pos.z - cbPos.z) : 999;
+        if (cbDist < 5.8) {
+          nearCommunityBoard = true;
+          let pr = Fo(1 - (cbDist - 1.8) / 4.0);
+          i.hud.setPrompt("BẢNG VÀNG LƯU BÚT: Xem lời chúc của mọi người & Gửi lời chúc [Nhấn E]", Math.max(0.25, pr), "E");
+          if (i.input.pressed("interact")) {
+            openCommunityBoard();
+          }
+        } else {
+          nearCommunityBoard = false;
+          i.hud.setPrompt(null);
+        }
       }
 
       return true;
