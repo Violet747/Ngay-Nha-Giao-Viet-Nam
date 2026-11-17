@@ -7180,10 +7180,14 @@ async function C1(i) {
     ctx.font = '600 32px "Be Vietnam Pro", sans-serif';
     ctx.fillText("“THẦY CÔ – MÁI TRƯỜNG – HÀNH TRÌNH TRI THỨC – TUỔI TRẺ VÀ CÔNG NGHỆ”", w / 2, 162);
   });
-  let bannerMesh = new THREE.Mesh(new THREE.PlaneGeometry(7.6, 1.05), new THREE.MeshBasicMaterial({ map: bannerTex.texture, side: THREE.DoubleSide }));
-  bannerMesh.position.set(0, 5.55, -0.86);
-  bannerMesh.rotation.y = Math.PI;
-  gateGroup.add(bannerMesh);
+  let bannerMat = new THREE.MeshBasicMaterial({ map: bannerTex.texture });
+  let bannerIn = new THREE.Mesh(new THREE.PlaneGeometry(7.6, 1.05), bannerMat);
+  bannerIn.position.set(0, 5.55, -0.86);
+  bannerIn.rotation.y = Math.PI;
+  gateGroup.add(bannerIn);
+  let bannerOut = new THREE.Mesh(new THREE.PlaneGeometry(7.6, 1.05), bannerMat);
+  bannerOut.position.set(0, 5.55, -0.84);
+  gateGroup.add(bannerOut);
 
   addBox(2.4, 0.45, 1.4, matBasalt, 2.7, 0.225, 18.4, { surface: "concrete" });
   addBox(2.1, 2.6, 0.32, matGold, 2.7, 1.65, 18.4, { surface: "concrete" });
